@@ -12,7 +12,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 -export([start_link/0]).
--export([document/1,create_document/0,add_version/3]).
+-export([document/1, create_document/0, add_version/3, add_tweet/2]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -36,6 +36,9 @@ document(Name) ->
 %% TODO:SPEC
 add_version(Document,User,Patch) -> 
   gen_server:call(?MODULE,{add_version,Document,User,Patch}).
+
+add_tweet(DocId, Tweet) ->
+  gen_server:cast(?MODULE, {add_tweet, DocId, Tweet}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions

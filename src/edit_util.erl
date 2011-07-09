@@ -9,7 +9,8 @@
 
 -include("elog.hrl").
 
--export([get_env/1, set_env/2,random_url/0]).
+-export([get_env/1, set_env/2, random_url/0, safe_term_to_binary/1, to_lower/1]).
+-export([mochi_to_jsx/1]).
 
 %% @doc Returns application:get_env(edit, Field) or its default value
 -spec get_env(atom()) -> term().
@@ -35,8 +36,43 @@ get_env_default(Field) ->
 set_env(Field, Value) ->
   application:set_env(edit, Field, Value).
 
+-spec random_url() -> string().
 random_url() -> 
   lists:flatten(lists:foldl(fun(_,AccIn) ->
       [random:uniform(25) + 96|AccIn] end,
       [], lists:seq(1,10))).
 
+-spec to_lower(binary()) -> binary().
+to_lower(Bin) ->
+  to_lower(Bin, <<>>).
+
+to_lower(<<>>, Acc) ->
+  Acc;
+to_lower(<<C, Rest/binary>>, Acc) when $A =< C, C =< $Z ->
+  to_lower(Rest, <<Acc/binary, (C+32)>>);
+to_lower(<<195, C, Rest/binary>>, Acc) when 128 =< C, C =< 150 -> %% A-0 with tildes plus enye
+  to_lower(Rest, <<Acc/binary, 195, (C+32)>>);
+to_lower(<<195, C, Rest/binary>>, Acc) when 152 =< C, C =< 158 -> %% U and Y with tilde plus greeks
+  to_lower(Rest, <<Acc/binary, 195, (C+32)>>);
+to_lower(<<C, Rest/binary>>, Acc) ->
+  to_lower(Rest, <<Acc/binary, C>>).
+
+-spec safe_term_to_binary(term()) -> binary().
+safe_term_to_binary(I) when is_integer(I) ->
+  list_to_binary(integer_to_list(I));
+safe_term_to_binary(L) when is_tuple(L) -> 
+  <<>>;
+safe_term_to_binary(L) when is_list(L) ->
+  unicode:characters_to_binary(L);
+safe_term_to_binary(undefined) -> 
+  <<>>;
+safe_term_to_binary(A) when is_atom(A) -> 
+  list_to_binary(atom_to_list(A));
+safe_term_to_binary(A) when is_binary(A) -> A.
+
+-spec mochi_to_jsx(itweet_mochijson2:json_object()) -> [proplists:property()].
+mochi_to_jsx({List}) when is_list(List) ->
+  lists:map(fun mochi_to_jsx_prop/1, List);
+mochi_to_jsx(Other) -> Other.
+
+mochi_to_jsx_prop({Key, Value}) -> {Key, mochi_to_jsx(Value)}.

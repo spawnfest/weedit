@@ -82,8 +82,14 @@ handle_request('GET', [], Req) ->
   {ok,Document} = edit_document:create(),
   Req:raw_headers_respond(302, "Location: /doc/" ++ Document ++ [13,10], "Type this!");
 
+%% all documents - rendered with title and body to the latest version
+
 handle_request('GET', [ "doc", DocId] , Req) ->
-  Req:file(filename:join(["www","document.html"]));
+  %% Req:file(filename:join(["www","document.html"]));
+  Mustaches = dict:from_list([{title, edit_document:title(DocId)},
+                              {body, edit_document:body(DocId)}]),
+      {ok, FileData} = file:read_file(filename:join(["www","document.html"])),
+      Req:ok(mustache:render(FileData,Mustaches));
 
 %% these are only here because matt and manuel are self hosting and can't properly path the files..
 %% remove when they self host
@@ -102,6 +108,8 @@ handle_request('GET', [ "doc", "stylesheets" |  Path] , Req) ->
   File = filename:join(["www/stylesheets" | Path]),
   ?INFO("~p~n", [File]),
   Req:file(File);
+
+%% Handle everything else
 
 handle_request('GET', Path, Req) ->
   ?INFO("~p~n", [Path]),

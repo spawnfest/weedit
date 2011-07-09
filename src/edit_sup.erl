@@ -33,5 +33,7 @@ init([]) ->
       {edit_db, {edit_db, start_link, []}, permanent, 1000, worker, [edit_db]},
   DocSup =
       {edit_doc_sup, {edit_doc_sup, start_link, []}, permanent, 5000, supervisor, [edit_doc_sup]},
+  Twitter =
+      {edit_itweep, {edit_itweep, start_link, []}, permanent, 1000, worker, [edit_itweep]},
   ?INFO("Edit supervisor starting...~n", []),
-  {ok, {{one_for_one, 5, 10}, [Db, DocSup | Listeners]}}.
+  {ok, {{one_for_one, 5, 10}, [Db, Twitter, DocSup | Listeners]}}.

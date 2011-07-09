@@ -29,26 +29,48 @@ var DiffMatchPatch = {
 
 var TSocket = {
   object:null,
+  doc_id:null,
   init: function(hostname,port) {
     this.object = new io.Socket(hostname, {port:port});
+    this.object.connect();
+
+    this.doc_id = location.pathname.split("/")[2];
 
     this.object.on('connect', function(){
       console.log("We connected!!");
+      TSocket.doHello();
     });
+
+
+    this.object.on('message', function(data){
+      console.log(data);
+      switch(data.action) {
+        case 'title':
+          TypeSocial.setTitle(data.diff)
+          break;
+        default:
+          console.log("I don't know this action");
+      }
+    });
+
+  },
+  doHello: function(){
+    this.object.send({"doc_id":this.doc_id,"action":"hello"});
   },
   doLogin: function(id,username) { 
     console.log("id and username = " + [id,username]); 
     //this.object.send('action':'login');
   },
-  setTitle: function(diff) { 
+  doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"action":"setTitle","diff":diff});
+    this.object.send({"doc_id":this.doc_id,"action":"title","diff":diff});
   }
 }
 
 var TypeSocial = {
   editor: null,
   title: null,
+  title_last_rev:null,
   socket: null,
   current_user: null,
   user_list: null,
@@ -74,7 +96,7 @@ var TypeSocial = {
       console.log("Here is the data" + event);
     });
   },
-  receiveTitle: function(diff) {
+  setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
   },
   init: function(ext_config) {
@@ -88,12 +110,12 @@ var TypeSocial = {
     this.dmp.init();
 
     // Set up Socket.io
-    this.socket.init(location.hostname,'12000');
+    this.socket.init(location.hostname,location.port);
 
-    this.socket.object.on('newtitle', function(data){
-      console.log(data);
-      TypeSocial.receiveTitle(data.diff);
-    });
+    // Let's monitor title changes
+    setInvertal(this.checkTitle,100);
+
+
   }
 }
 
