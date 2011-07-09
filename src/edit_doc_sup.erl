@@ -11,7 +11,7 @@
 
 -behaviour(supervisor).
 
--export([start_link/0, init/1]).
+-export([start_link/0, start_doc/1, init/1]).
 
 -include("elog.hrl").
 
@@ -19,6 +19,11 @@
 -spec start_link() -> {ok, pid()}.
 start_link() ->
   supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+
+%% @doc  Starts a document process
+%-spec start_doc(document_id()) -> {ok, pid()}.
+start_doc(DocId) ->
+  supervisor:start_child(?MODULE, [DocId]).
 
 %% @private
 -spec init([]) -> {ok, {{simple_one_for_one, 5, 1}, [supervisor:child_spec()]}}.
