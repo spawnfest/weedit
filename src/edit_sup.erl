@@ -23,11 +23,11 @@ start_link() ->
 %% @private
 -spec init([]) -> {ok, {{one_for_one, 5, 10}, [supervisor:child_spec()]}}.
 init([]) ->
-  {MinPort, MaxPort} = rpcio_util:get_env(socketio_port_range),
+  {MinPort, MaxPort} = edit_util:get_env(socketio_port_range),
   Listeners =
-      [{erlang:list_to_atom("rpcio_client_listener-" ++ erlang:integer_to_list(Port)),
-        {rpcio_client_listener, start_link, [Port]},
-        permanent, 1000, worker, [rpcio_client_listener]} ||
+      [{erlang:list_to_atom("edit_client_listener-" ++ erlang:integer_to_list(Port)),
+        {edit_client_listener, start_link, [Port]},
+        permanent, 1000, worker, [edit_client_listener]} ||
        Port <- lists:seq(MinPort, MaxPort)],
   Db =
       {edit_db, {edit_db, start_link, []}, permanent, 1000, worker, [edit_db]},
