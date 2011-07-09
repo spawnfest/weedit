@@ -46,11 +46,11 @@
 
 	
 		<!-- Login Window -->
-
+		
 		<div id="dialog" class="window">
 			<div id="login_logo">
 				<img src="images/login_logo.png">
-			</div>
+			</div>	
 			<div id="login_info">
 				<h2>Welcome to TypeSocial!  Login with Twitter.</h2>	
 			</div>
@@ -99,6 +99,10 @@ $(document).ready(function() {
         //Get the window height and width
         var winH = $(window).height();
         var winW = $(window).width();
+		
+		//Set the popup window to center
+		$(id).css('top',  winH/2-$(id).height()/2);
+		$(id).css('left', winW/2-$(id).width()/2);
               
         //transition effect
         $(id).fadeIn(2000); 

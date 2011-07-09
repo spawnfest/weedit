@@ -39,7 +39,6 @@ hr {
   -webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-  position: absolute; top: 200px; left:410px; 
 }
 
 #login_info h2 {
@@ -48,7 +47,7 @@ hr {
 }
 
 #login_logo {
-	position: absolute; top: -20px; left:-20px; 
+	position: absolute; top: -20px; left:-20px;
 }
 
 #twitter_login {
