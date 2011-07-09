@@ -1,4 +1,4 @@
--module(document).
+-module(edit_document).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 
