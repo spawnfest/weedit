@@ -43,6 +43,50 @@ hr {
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
 
+#newsearchterm {
+  width:375px; 
+  height:203px;
+  padding:40px;
+  background-color:#ffffff;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+  -webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+#twithash {
+	font-size: 32pt;
+	color:#98AFC7;
+}
+
+#searchterminput {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	font-size: 32pt;
+	vertical-align: top;
+	width: 275px;
+	characters:25;
+}
+
+#submitbutton {
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+	padding: 1em;
+	background-color: #25587E;
+	text-align: center;
+	font-size: 14pt;
+	font-weight: bold;
+	color: white;	
+	text-decoration:none;
+}
+
+#submitbutton a {
+	text-decoration:none;
+	color:white;
+	font-weight:bold;
+}
 #login_info h2 {
 	font-size: 24pt;
 	font-spacing:-1px;
@@ -124,6 +168,33 @@ hr {
 	font-spacing:-1px;
 }
 
+#searchtitle {
+	float:left;
+	vertical-align:top;
+	padding:2px;
+	color:#25587E;
+	font-size:14pt;
+}
+
+#addterm {
+	font-weight:bolder;
+	text-decoration:none;
+	color:#25587E;	
+}
+
+#searchterms {
+	float:left;
+}
+
+#searchterm {
+	float:left;
+	vertical-align:top;
+	padding:2px;
+	color:#98AFC7;
+	font-size:14pt;
+	font-weight:bold;
+}
+
 .tweet {
 	float:left;
 	vertical-align:top;
@@ -140,10 +211,6 @@ hr {
 }
 
 /* Twitter side bar styling */
-
-.twittersidebar {
-	
-}
 
 #tweets {
 	background-color: white;
