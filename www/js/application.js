@@ -65,11 +65,11 @@ var TSocket = {
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":diff});
+    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":JSON.stringify(diff)});
   },
   doSetDoc: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":diff});
+    this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
   doSetTwitter: function(term) { 
     console.log(term); 
