@@ -41,13 +41,15 @@ handle_event({outbound_message, Action, MessagePropList, FromClientPid}, State) 
       noop;
     FromClientPid -> noop; %% the result of a message from ourselves, eat it...
     Pid -> 
+      ?INFO("oh yeah we got something ~p ~p ~n",[Action,MessagePropList]),
       socketio_client:send(Pid,
                            #msg{json = true,
                                 content = [
                                            {<<"error">>, false},
                                            {<<"action">>,Action} | MessagePropList       
                                           ]})
-  end;
+  end,
+  {ok, State};
 
 handle_event({document_EXIT, DocId, Reason}, State) ->
   ?INFO("TODO DOC EXIT",[]),

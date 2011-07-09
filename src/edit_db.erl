@@ -58,7 +58,7 @@ handle_call(create_document, _From, State) ->
   {reply, {ok, Name}, State};
 
 handle_call(_Request, _From, State) ->
-  {noreply, ok, State}.
+  {reply, ok, State}.
 
 handle_cast(_Msg, State) ->
   {noreply, State}.
