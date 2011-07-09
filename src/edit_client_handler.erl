@@ -6,6 +6,8 @@
 -export([init/1, handle_event/2, handle_call/2,
          handle_info/2, terminate/2, code_change/3]).
 
+-export([start/1]).
+
 -include("elog.hrl").
 -include("socketio.hrl").
 -include("misultin.hrl").
@@ -17,8 +19,26 @@ start(Pid) ->
 
 init([]) -> {ok, #state{}}.
 
-handle_event({message, ClientPid, SocketIoMsg}, State) ->
-ok.
+handle_event({message, ClientPid, SMsg}, State) ->
+  {Command, Data} =
+      case SMsg of
+        #msg{content = MsgProps, json = true} ->
+          {edit_util:safe_term_to_binary(proplists:get_value(<<"action">>, MsgProps, <<>>)),MsgProps};
+        #msg{content = Text, json = false} ->
+          {text, Text}
+      end,
+      case edit_api:handle_command(Command, Data) of
+          {ok, Response} -> 
+            socketio_client:send(ClientPid,
+             #msg{json = true,
+              content = [{<<"error">>, false},
+                     {<<"result">>, iolist_to_binary(io_lib:format("~p", [Response]))}]});
+          {error, Why } -> 
+             #msg{json = true,
+                  content = [{<<"error">>, true},
+                         {<<"result">>, iolist_to_binary(io_lib:format("~p", [Why]))}]}
+      end,
+  {ok, State}.
 
 handle_call(_Request, State) ->
     Reply = ok,

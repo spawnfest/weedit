@@ -82,6 +82,8 @@ handle_request('GET', [], Req) ->
   {ok,Document} = edit_document:create(),
   Req:raw_headers_respond(302, "Location: /doc/" ++ Document ++ [13,10], "Type this!");
 
+%% all documents
+
 handle_request('GET', [ "doc", DocId] , Req) ->
   Req:file(filename:join(["www","document.html"]));
 
@@ -102,6 +104,8 @@ handle_request('GET', [ "doc", "stylesheets" |  Path] , Req) ->
   File = filename:join(["www/stylesheets" | Path]),
   ?INFO("~p~n", [File]),
   Req:file(File);
+
+%% Handle everything else
 
 handle_request('GET', Path, Req) ->
   ?INFO("~p~n", [Path]),

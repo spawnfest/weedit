@@ -9,7 +9,7 @@
 
 -include("elog.hrl").
 
--export([get_env/1, set_env/2,random_url/0]).
+-export([get_env/1, set_env/2,random_url/0, safe_term_to_binary/1]).
 
 %% @doc Returns application:get_env(edit, Field) or its default value
 -spec get_env(atom()) -> term().
@@ -39,4 +39,17 @@ random_url() ->
   lists:flatten(lists:foldl(fun(_,AccIn) ->
       [random:uniform(25) + 96|AccIn] end,
       [], lists:seq(1,10))).
+
+safe_term_to_binary(I) when is_integer(I) ->
+  list_to_binary(integer_to_list(I));
+safe_term_to_binary(L) when is_tuple(L) -> 
+  <<>>;
+safe_term_to_binary(L) when is_list(L) ->
+  unicode:characters_to_binary(L);
+safe_term_to_binary(undefined) -> 
+  <<>>;
+safe_term_to_binary(A) when is_atom(A) -> 
+  list_to_binary(atom_to_list(A));
+safe_term_to_binary(A) when is_binary(A) -> A.
+
 

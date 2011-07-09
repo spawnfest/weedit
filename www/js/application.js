@@ -31,10 +31,18 @@ var TSocket = {
   object:null,
   init: function(hostname,port) {
     this.object = new io.Socket(hostname, {port:port});
+    this.object.connect();
 
     this.object.on('connect', function(){
       console.log("We connected!!");
     });
+
+
+    this.object.on('message', function(data){
+      console.log("Here's some data");
+      console.log(data);
+    });
+
   },
   doLogin: function(id,username) { 
     console.log("id and username = " + [id,username]); 
@@ -42,7 +50,7 @@ var TSocket = {
   },
   setTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"action":"setTitle","diff":diff});
+    this.object.send({"action":"title","diff":diff});
   }
 }
 
@@ -88,7 +96,7 @@ var TypeSocial = {
     this.dmp.init();
 
     // Set up Socket.io
-    this.socket.init(location.hostname,'12000');
+    this.socket.init(location.hostname,location.port);
 
     this.socket.object.on('newtitle', function(data){
       console.log(data);
