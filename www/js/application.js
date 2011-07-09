@@ -110,10 +110,12 @@ var TypeSocial = {
     this.dmp.init();
 
     // Set up Socket.io
-    this.socket.init(location.hostname,location.port);
+    if (location.hostname = '') {
+    	this.socket.init(location.hostname,location.port);
+    }
 
     // Let's monitor title changes
-    setInvertal(this.checkTitle,100);
+    setInterval(this.checkTitle,100);
 
 
   }
@@ -226,5 +228,5 @@ $(document).ready(function(){
   RefreshClientList.load();
   RefreshTweetList.load();
   LoadTweetBox.init();
-  //LoginBox.init();
+  LoginBox.init();
 });
