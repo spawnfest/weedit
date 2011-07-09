@@ -14,7 +14,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 -export([start_link/0]).
--export([document/1, create_document/0, add_version/3, add_tweet/2, set_hash_tags/2]).
+-export([document/1, create_document/1, create_document/0, add_version/3, add_tweet/2, set_hash_tags/2]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -31,6 +31,10 @@ start_link() ->
 
 create_document() -> 
   {ok,Name} = gen_server:call(?MODULE,create_document).
+
+create_document(DocId) -> 
+  {ok,Name} = gen_server:call(?MODULE,{create_document, DocId}).
+
 
 document(DocId) -> 
   {ok, #edit_document{id = DocId}}.
@@ -56,6 +60,9 @@ init(Args) ->
 handle_call(create_document, _From, State) ->
   Name = random_document_url(),
   {reply, {ok, Name}, State};
+
+handle_call({create_document, DocId}, _From, State) ->
+  {reply, {ok, DocId}, State};
 
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
