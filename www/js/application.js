@@ -152,6 +152,8 @@ var TypeSocial = {
     this.title = $('#document_title');
     this.title_last_rev = this.title.val();
 
+    this.editor_last_rev = this.editor.val();
+
     // Set up Diff Match Patch
     this.dmp.init();
     // Set up Socket.io
