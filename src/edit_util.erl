@@ -10,6 +10,7 @@
 -include("elog.hrl").
 
 -export([get_env/1, set_env/2, random_url/0, safe_term_to_binary/1, to_lower/1]).
+-export([mochi_to_jsx/1]).
 
 %% @doc Returns application:get_env(edit, Field) or its default value
 -spec get_env(atom()) -> term().
@@ -68,3 +69,10 @@ safe_term_to_binary(undefined) ->
 safe_term_to_binary(A) when is_atom(A) -> 
   list_to_binary(atom_to_list(A));
 safe_term_to_binary(A) when is_binary(A) -> A.
+
+-spec mochi_to_jsx(itweet_mochijson2:json_object()) -> [proplists:property()].
+mochi_to_jsx({List}) when is_list(List) ->
+  lists:map(fun mochi_to_jsx_prop/1, List);
+mochi_to_jsx(Other) -> Other.
+
+mochi_to_jsx_prop({Key, Value}) -> {Key, mochi_to_jsx(Value)}.

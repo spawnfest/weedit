@@ -14,6 +14,7 @@
 
 -export([create/0, start_link/1]).
 -export([event_dispatcher/1, process_name/1, stop/1]).
+-export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 -include("elog.hrl").
@@ -52,6 +53,10 @@ process_name(DocId) ->
 process_name(DocId, local) ->
   list_to_atom("edit-document-" ++ DocId).
 
+-spec add_tweet(document_id(), itweet:tweet()) -> ok.
+add_tweet(DocId, Tweet) ->
+  gen_server:cast(process_name(DocId), {add_tweet, Tweet}).
+
 -spec stop(document_id()) -> ok.
 stop(DocId) ->
   ?INFO("Manually stopping ~s~n", [DocId]),
@@ -89,6 +94,12 @@ init(DocId) ->
 handle_call(_Request, _From, State) ->
   {noreply, ok, State}.
 
+handle_cast({add_tweet, Tweet}, State) ->
+  #edit_document{id = DocId} = State#state.document,
+  ok = edit_db:add_tweet(DocId, Tweet),
+  gen_event:notify(event_dispatcher(DocId, local),
+                   {outbound_message, <<"tweet">>, edit_util:mochi_to_jsx(Tweet)}),
+  {noreply, State};
 handle_cast(_Msg, State) ->
   {noreply, State}.
 

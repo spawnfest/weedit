@@ -46,6 +46,9 @@ test: all
 		erl -noshell -noinput ${RUN} -run edit_tests main;\
 	fi
 
+xref: all
+	@rebar skip_deps=true xref
+
 rel: deps
 	@rebar compile generate
 

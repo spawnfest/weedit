@@ -27,8 +27,8 @@ start_link() ->
   pg2:create(?MODULE),
   Pid =
     case itweep:start_link({local, ?MODULE}, ?MODULE, [],
-                           [{user, inaka:get_env(twitter_stream_user)},
-                            {password, inaka:get_env(twitter_stream_password)}]) of
+                           [{user, edit_util:get_env(twitter_stream_user)},
+                            {password, edit_util:get_env(twitter_stream_password)}]) of
       {ok, P} -> P;
       {error, {already_started, P}} -> P
     end,
@@ -83,19 +83,19 @@ handle_status(Tweet, State) ->
 %% @hidden
 -spec handle_event(Event::atom(), Data::itweet_mochijson2:json_object(), State::term()) -> {ok, state()}.
 handle_event(delete, JsonObj, State) ->
-  case couchbeam_doc:get_value(<<"status">>, JsonObj, null) of
+  case itweet_mochijson2:get_value(<<"status">>, JsonObj, null) of
     null ->
       ok;
     JsonStatus ->
-      case {couchbeam_doc:get_value(<<"user_id_str">>, JsonStatus, null),
-            couchbeam_doc:get_value(<<"id_str">>, JsonStatus, null)} of
+      case {itweet_mochijson2:get_value(<<"user_id_str">>, JsonStatus, null),
+            itweet_mochijson2:get_value(<<"id_str">>, JsonStatus, null)} of
         {undefined, _} ->
           ok;
         {_, undefined} ->
           ok;
         {UserId, MsgId} ->
-          ?INFO("delete: twitter-~s-~s~n", [UserId, MsgId]),
-          italkdb:delete_messages(<<"twitter-", UserId/binary, $-, MsgId/binary>>)
+          ?INFO("delete: twitter-~s-~s~n", [UserId, MsgId])
+          %%TODO: Honour deletes
       end
   end,
   {ok, State};

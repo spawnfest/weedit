@@ -6,5 +6,6 @@
   {registered, []},
   {applications,[kernel,stdlib,crypto,inets,elog,socketio]},
   {mod, { edit, []}},
-  {env, []}
+  {env, [{twitter_stream_user, "inaka_testing"},
+         {twitter_stream_password, "nohaymonedas"}]}
  ]}.
