@@ -2,8 +2,9 @@ ERL					?= erl
 ERLC				= erlc
 EBIN_DIRS		:= $(wildcard deps/*/ebin)
 APPS				:= $(shell dir apps)
-NODE				= {{name}}
-REL					= {{name}}
+NODE				= semipro
+RUN 				:= +Bc +K true -smp enable -pa ebin deps/*/ebin -s crypto -s inets -s ssl -s elog -s socketio
+
 
 .PHONY: rel deps
 
@@ -22,32 +23,35 @@ clean:
 realclean: clean
 	@rebar delete-deps
 
-test:
-	@rebar skip_deps=true ct
+run: all
+	if [ -f `hostname`.config ]; then\
+		erl  -config `hostname` -boot start_sasl ${RUN} -s edit;\
+	else\
+		erl  -boot start_sasl ${RUN} -s edit;\
+	fi
+
+shell: all
+	if [ -f `hostname`.config ]; then\
+		erl  -config `hostname` -boot start_sasl ${RUN};\
+	else\
+		erl  -boot start_sasl ${RUN};\
+	fi
+
+test: all
+	if [ -f `hostname`.config ]; then\
+		erl -noshell -noinput -config `hostname` ${RUN} -run edit_tests main;\
+	else\
+		erl -noshell -noinput ${RUN} -run edit_tests main;\
+	fi
 
 rel: deps
 	@rebar compile generate
-
-start: rel
-	@./rel/$(NODE)/bin/$(REL) start
-
-stop:
-	@./rel/$(NODE)/bin/$(REL) stop
-
-ping:
-	@./rel/$(NODE)/bin/$(REL) ping
-
-attach:
-	@./rel/$(NODE)/bin/$(REL) attach
 
 doc:
 	rebar skip_deps=true doc
 	for app in $(APPS); do \
 		cp -R apps/$${app}/doc doc/$${app}; \
 	done;
-
-console:
-	@erl -pa ebin include deps/*/ebin deps/*/include ebin include -boot start_sasl
 
 analyze: checkplt
 	@rebar skip_deps=true dialyze
