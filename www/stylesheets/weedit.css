@@ -6,7 +6,9 @@ body {
 }
 
 hr {
-	height: .5em;
+	clear:both;
+  	margin:0px;
+	height:.1em;
 }
 
 #mask {
@@ -89,20 +91,10 @@ hr {
 	vertical-align: top;
 	width: 940px;
 }
-.documentheader {
-	
-}
-
-.documentbody {
-	
-}
-
-.documentfooter {
-	
-}
 
 /* User side bar styling */
 #userlist {
+	padding:2px;
 	background-color: white;
 	min-height:520px;
 	max-height:520px;
@@ -112,6 +104,39 @@ hr {
   	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+.twitteritem {
+	padding:2px;	
+	vertical-align:middle;
+}
+
+#twitter_avatar {
+	vertical-align:middle;
+	align:left;
+	height: 50px;
+	width:50px;
+}
+
+#handle {
+	vertical-align:middle;
+	font-size:13pt;
+	font-spacing:-1px;
+}
+
+.tweet {
+	float:left;
+	vertical-align:top;
+	padding:2px;
+	min-height:70px;
+	max-height:70px;
+	color:#98AFC7;
+}
+
+#tweetmsg {
+	vertical-align:top;
+	font-size:9pt;
+	font-spacing:-1px;
 }
 
 /* Twitter side bar styling */
@@ -130,6 +155,7 @@ hr {
   	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+	overflow: hidden
 }
 
 

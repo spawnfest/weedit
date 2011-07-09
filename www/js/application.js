@@ -122,20 +122,123 @@ var TypeSocial = {
     this.dmp.init();
 
     // Set up Socket.io
-    this.socket.init(location.hostname,location.port);
+    if (location.hostname = '') {
+    	this.socket.init(location.hostname,location.port);
+    }
 
     // Let's monitor title changes
-    setInterval(this.checkTitle,999);
+    setInterval(this.checkTitle,100);
 
 
   }
 }
 
 
+var RefreshClientList = {
+	//TODO: Parse JSON
+	load: function() {
+		var users=["Chad","Fernando","Manuel","Matt", "Matt","Chad"];
+	
+		jQuery.each(users, function() {
+			if ($("#" + this).length == 0){			
+				$('#userlist').append('<div class="twitteritem" id="' + this + '"><img id="twitter_avatar" src="images/twitter_logo.png"><span id="handle">' + this + '</span></div>')
+			}
+		});
+	}
+}
 
+var RefreshTweetList = {
+	//TODO: Parse JSON
+	load: function() {
+		var tweets=["more test text","This is some text","this is some more test text","this text is awesome","more and more text", "this is the absolute maximum size of a tweet.  this should not overflow and the tweet div maximum should be set to this height, not more ok!"];
+	
+		jQuery.each(tweets, function() {
+			var text	= '';
+			if (this.length >= 100) {
+				//TODO: Fix url
+				text	= this.substring(0,100) + ' <a href="#">...</a>';
+			} else {
+				text	= this;				
+			}
+						
+			if($("#tweets > div").size() == 5) {
+				$('#tweets').find('div').first().fadeOut(500).remove();
+				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+			} else {
+				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+			}
+		});
+	}
+}
 
+var LoginBox = {
+	init: function() {
+	 	var	getridofthiswhenwehavesession = '';
+		
+		if (getridofthiswhenwehavesession == '') {
+	        //Cancel the link behavior
+	        //e.preventDefault();
+	        //Get the A tag
+	        //var id = $(this).attr('href');
+			var id = $('#dialog');
+	     
+	        //Get the screen height and width
+	        var maskHeight = $(document).height();
+	        var maskWidth = $(window).width();
+	     
+	        //Set height and width to mask to fill up the whole screen
+	        $('#mask').css({'width':maskWidth,'height':maskHeight});
+	         
+	        //transition effect     
+	        $('#mask').fadeIn(1000);    
+	        $('#mask').fadeTo("slow",0.8);  
+	     
+	        //Get the window height and width
+	        var winH = $(window).height();
+	        var winW = $(window).width();
+			
+			//Set the popup window to center
+			$(id).css('top',  winH/2-$(id).height()/2);
+			$(id).css('left', winW/2-$(id).width()/2);
+	              
+	        //transition effect
+	        $(id).fadeIn(2000); 
+	     }
+	    
+	     
+	    //if close button is clicked
+	    $('.window .close').click(function (e) {
+	        //Cancel the link behavior
+	        e.preventDefault();
+	        $('#mask, .window').hide();
+	    });     
+	     
+	    //if mask is clicked
+	    $('#mask').click(function () {
+	        $(this).hide();
+	        $('.window').hide();
+	    });
+	}
+}
+
+var LoadTweetBox = {
+	init: function() {
+		twttr.anywhere(function (T) {
+		
+			T("#tbox").tweetBox({
+				label: "Thoughts?",
+		  		height: 50,
+		  		width: 190,
+		  		defaultContent: "<Type Socially!>"
+			});
+		});
+	}
+}
 $(document).ready(function(){
 
   TypeSocial.init();
-
+  RefreshClientList.load();
+  RefreshTweetList.load();
+  LoadTweetBox.init();
+  LoginBox.init();
 });
