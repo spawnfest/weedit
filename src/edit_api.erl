@@ -27,6 +27,7 @@ handle_command(_ClientPid, <<"title">>, DocId, Data) ->
  
 handle_command(_ClientPid, <<"doc">>, DocId, Data) -> 
   DocDiff = edit_util:safe_term_to_binary(proplists:get_value(<<"diff">>, Data, <<>>)),
+  ?INFO("got diff of document: ~p ~n",[DocDiff]),
   edit_document:edit_doc(DocId,DocDiff),
   noreply.
 
