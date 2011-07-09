@@ -1,6 +1,7 @@
 body {
 	font-family: arial, sans-serif;	
-	background-color: #5CB3FF;
+	/*background-color: #5CB3FF;*/
+	background-color: #ADDFFF;
 	/*background-image:url('images/background.png');*/
 }
 
@@ -8,7 +9,56 @@ hr {
 	height: .5em;
 }
 
+#mask {
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:9000;
+  background-color:#000;
+  display:none;
+}
+  
+#boxes .window {
+  position:absolute;
+  left:0;
+  top:0;
+  width:440px;
+  height:200px;
+  display:none;
+  z-index:9999;
+  padding:20px;
+}
+ 
+#boxes #dialog {
+  width:375px; 
+  height:203px;
+  padding:40px;
+  background-color:#ffffff;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+  -webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  position: absolute; top: 200px; left:410px; 
+}
 
+#login_info h2 {
+	font-size: 24pt;
+	font-spacing:-1px;
+}
+
+#login_logo {
+	position: absolute; top: -20px; left:-20px; 
+}
+
+#twitter_login {
+	text-align:center;
+}
+
+#twitter_login_logo {
+	height: 75px;
+	width: 75px;
+}
 .mainbody {
 	min-height:800px;
 	height:auto !important;
@@ -30,23 +80,6 @@ hr {
 #header {
 	min-height:57px;
 }
-
-/* Index page styling */
-
-#loginpanel {
-	max-height: 300px;
-	margin: 20px;
-	background-color: white;
-	min-height:400px;
-	max-height:400px;
-	height:auto !important;
-	-moz-border-radius: 7px;
-  	border-radius: 7px;
-  	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-  	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-  	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-}
-
 
 /* Document page styling */
 #document_title {
@@ -100,14 +133,4 @@ hr {
   	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
 
-#palette {
-	background-color: white;
-	min-height:800px;
-	height:auto !important;
-	-moz-border-radius: 7px;
-  	border-radius: 7px;
-  	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-  	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-  	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-}
 
