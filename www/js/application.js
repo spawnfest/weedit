@@ -48,8 +48,6 @@ var TSocket = {
         case 'title':
           TypeSocial.setTitle(data.diff)
           break;
-        case 'tweet':
-          break;
         default:
           console.log("I don't know this action");
       }
@@ -73,6 +71,7 @@ var TypeSocial = {
   editor: null,
   title: null,
   title_last_rev:"",
+  timer:null,
   socket: null,
   current_user: null,
   user_list: null,
@@ -110,6 +109,9 @@ var TypeSocial = {
   setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
   },
+  startInvertal: function(interval){
+    this.timer = setInverval(checkTitle,interval);
+  }
   init: function(ext_config) {
     // Create the editor and set the config vars
     if (ext_config) {this.config = config}
@@ -121,12 +123,14 @@ var TypeSocial = {
     this.dmp.init();
 
     // Set up Socket.io
-    if (location.hostname != '') {
+    if (location.hostname == '') {
     	this.socket.init(location.hostname,location.port);
     }
 
     // Let's monitor title changes
-    //setInterval(this.checkTitle,100);
+   //this.startInverval(1000);
+
+
   }
 }
 
@@ -134,7 +138,7 @@ var TypeSocial = {
 var RefreshClientList = {
 	//TODO: Parse JSON
 	load: function() {
-		var users=["Chad","Fernando","Manuel","Matt","Matt","Chad"];
+		var users=["Chad","Fernando","Manuel","Matt", "Matt","Chad"];
 	
 		jQuery.each(users, function() {
 			if ($("#" + this).length == 0){			
@@ -165,12 +169,6 @@ var RefreshTweetList = {
 				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 			}
 		});
-	}
-}
-
-var GetHashTerms = {
-	init: function() {
-		
 	}
 }
 
