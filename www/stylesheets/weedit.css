@@ -1,0 +1,38 @@
+body {
+	font-family: arial, sans-serif;
+}
+
+hr {
+	height: .5em;
+}
+
+
+.mainbody {
+	min-height:800px;
+	height:auto !important;
+}
+
+.documentheader {
+	
+}
+
+.documentbody {
+	
+}
+
+.documentfooter {
+	
+}
+
+.usersidebar {
+	
+}
+
+.twittersidebar {
+	
+}
+
+#palette {
+	background-color: white;
+}
+
