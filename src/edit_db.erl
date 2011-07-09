@@ -16,7 +16,7 @@
 -record(user, {id,username}).
 
 -export([start_link/0]).
--export([create_document/2,add_version/3,remove_version/3]).
+%%-export([create_document/2,add_version/3,remove_version/3]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -31,7 +31,7 @@
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-create_document -> 
+create_document() -> 
   Name = gen_server:call(?SERVER,new_document_url).
 
 %% ------------------------------------------------------------------
@@ -67,7 +67,7 @@ init_schema() ->
 random_document_url() -> 
   Name = lists:flatten(lists:foldl(fun(X,AccIn) ->
         [random:uniform(25) + 96|AccIn] end,
-        [], lists:seq(1,10))).
+        [], lists:seq(1,10))),
   case ets:member(?DOC_TABLE, Name) of 
     true  -> random_document_url();
     false -> Name

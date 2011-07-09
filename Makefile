@@ -1,7 +1,6 @@
 ERL					?= erl
 ERLC				= erlc
 EBIN_DIRS		:= $(wildcard deps/*/ebin)
-APPS				:= $(shell dir apps)
 NODE				= semipro
 RUN 				:= +Bc +K true -smp enable -pa ebin deps/*/ebin -s crypto -s inets -s ssl -s elog -s socketio
 
@@ -11,6 +10,9 @@ RUN 				:= +Bc +K true -smp enable -pa ebin deps/*/ebin -s crypto -s inets -s ss
 all: deps compile
 
 compile: deps
+	@rebar compile
+
+quick:
 	@rebar compile
 
 deps:
@@ -46,12 +48,6 @@ test: all
 
 rel: deps
 	@rebar compile generate
-
-doc:
-	rebar skip_deps=true doc
-	for app in $(APPS); do \
-		cp -R apps/$${app}/doc doc/$${app}; \
-	done;
 
 analyze: checkplt
 	@rebar skip_deps=true dialyze
