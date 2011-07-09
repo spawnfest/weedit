@@ -62,7 +62,7 @@ var TSocket = {
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"title","diff":diff});
+    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":diff});
   },
   doSetTwitter: function(term) { 
     console.log(term); 
@@ -105,7 +105,7 @@ var TypeSocial = {
 
     if (this.title_last_rev != this.title.val()) {
        console.log(this);
-       diff = this.dmp.getDiff(this.title.val(),this.title_last_rev);
+       diff = this.dmp.getDiff(this.title_last_rev,this.title.val());
        this.title_last_rev = this.title.val();
        this.socket.doSetTitle(diff);
     }
