@@ -29,12 +29,16 @@ var DiffMatchPatch = {
 
 var TSocket = {
   object:null,
+  doc_id:null,
   init: function(hostname,port) {
     this.object = new io.Socket(hostname, {port:port});
     this.object.connect();
 
+    this.doc_id = location.pathname.split("/")[2]
+
     this.object.on('connect', function(){
       console.log("We connected!!");
+      this.doHello();
     });
 
 
@@ -44,13 +48,15 @@ var TSocket = {
     });
 
   },
+  doHello: function(){
+    this.object.send({"doc_id":doc_id,"action":"title");
+  },
   doLogin: function(id,username) { 
     console.log("id and username = " + [id,username]); 
     //this.object.send('action':'login');
   },
   setTitle: function(diff) { 
     console.log(diff); 
-    doc_id = location.pathname.split("/")[2]
     this.object.send({"doc_id":doc_id,"action":"title","diff":diff});
   }
 }
