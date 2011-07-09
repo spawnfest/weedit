@@ -56,6 +56,13 @@ init(Port) -> {ok, #state{port = Port}}.
 handle_event({client, Pid}, State) ->
   ok = client_handler:start(Pid),
   {ok, State};
+handle_event({message, ClientPid, Smsg}, State) ->
+  Cmd = case Smsg of
+      #msg{content = MsgProps, json = true} -> todo;
+      #msg{content = Text, json = false} -> todo
+      end,
+  {ok, State};
+
 handle_event(Event, State) ->
   ?INFO("Ignored socketio event: ~p~n", [Event]),
   {ok, State}.
