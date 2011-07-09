@@ -3,6 +3,8 @@ ERLC				= erlc
 EBIN_DIRS		:= $(wildcard deps/*/ebin)
 APPS				:= $(shell dir apps)
 NODE				= semipro
+RUN 				:= +Bc +K true -smp enable -pa ebin deps/*/ebin -s crypto -s inets -s ssl -s elog -s socketio
+
 
 .PHONY: rel deps
 
