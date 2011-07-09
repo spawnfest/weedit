@@ -53,9 +53,13 @@ init(Port) -> {ok, #state{port = Port}}.
 %% each installed event handler to handle the event.
 %% @end
 %%--------------------------------------------------------------------
-handle_event(_Event, State) ->
-    {ok, State}.
-
+handle_event({client, Pid}, State) ->
+  ok = client_handler:start(Pid),
+  {ok, State};
+handle_event(Event, State) ->
+  ?INFO("Ignored socketio event: ~p~n", [Event]),
+  {ok, State}.
+  
 %%--------------------------------------------------------------------
 %% @spec handle_call(Request, State) -> {ok, Reply, State} |
 %%                                {swap_handler, Reply, Args1, State1,

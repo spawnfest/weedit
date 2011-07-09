@@ -3,6 +3,6 @@
               {vsn,"0.1.0"},
               {registered,[]},
               {applications,[kernel,stdlib,crypto,inets,elog,socketio]},
-              {mod,{edit_app,[]}},
+              {mod,{edit,[]}},
               {env,[]},
-              {modules,[edit,edit_listener,edit_sup]}]}.
+              {modules,[client_handler,edit,edit_listener,edit_sup]}]}.

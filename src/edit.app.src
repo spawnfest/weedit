@@ -5,7 +5,7 @@
   {vsn, "0.1.0"},
   {registered, []},
   {applications,[kernel,stdlib,crypto,inets,elog,socketio]},
-  {mod, { edit_app, []}},
+  {mod, { edit, []}},
   {env, []}
  ]}.
 %% vim: set filetype=erlang tabstop=2
