@@ -5,4 +5,4 @@
               {applications,[kernel,stdlib,crypto,inets,elog,socketio]},
               {mod,{edit_app,[]}},
               {env,[]},
-              {modules,[edit,edit_sup]}]}.
+              {modules,[edit,edit_listener,edit_sup]}]}.

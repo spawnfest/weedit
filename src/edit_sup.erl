@@ -19,7 +19,9 @@ start_link() ->
 %%%.
 %%%'   CALLBACKS
 init([]) ->
-  {ok, { {one_for_one, 5, 10}, []} }.
-
-%%%.
-%%% vim: set filetype=erlang tabstop=2 foldmarker=%%%',%%%. foldmethod=marker:
+  Listeners =
+    [{erlang:list_to_atom("client-" ++ erlang:integer_to_list(Port)),
+      {edit_listener, start_link, [Port]},
+      permanent, 1000, worker, [edit_listener]} ||
+     Port <- lists:seq(12000, 13000)],
+  {ok, {{one_for_one, 5, 10}, Listeners}}.
