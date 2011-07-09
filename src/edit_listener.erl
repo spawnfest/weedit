@@ -12,6 +12,7 @@
 -export([handle_request/3]).
 
 -include("elog.hrl").
+-include("socketio.hrl").
 
 -record(state, {port}).
 
@@ -58,9 +59,9 @@ handle_event({client, Pid}, State) ->
   {ok, State};
 handle_event({message, ClientPid, Smsg}, State) ->
   Cmd = case Smsg of
-      #msg{content = MsgProps, json = true} -> todo;
-      #msg{content = Text, json = false} -> todo
-      end,
+          #msg{content = MsgProps, json = true} -> todo;
+          #msg{content = Text, json = false} -> todo
+        end,
   {ok, State};
 
 handle_event(Event, State) ->
