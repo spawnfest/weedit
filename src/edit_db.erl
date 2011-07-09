@@ -42,6 +42,7 @@ add_version(Document,User,Patch) ->
 %% ------------------------------------------------------------------
 
 init(Args) ->
+  init_schema(),
   {ok, Args}.
 
 handle_call(create_document, _From, State) ->
