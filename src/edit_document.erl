@@ -14,10 +14,10 @@
 
 -export([create/0, start_link/1]).
 -export([event_dispatcher/1, process_name/1, stop/1]).
--export([set_hash_tags/2]).
 -export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
--export([title/1,body/1]).
+-export([title/1, body/1]).
+-export([set_hash_tags/3, edit_title/3, edit_body/3]).
 
 -include("elog.hrl").
 -include("socketio.hrl").
@@ -59,9 +59,9 @@ process_name(DocId, local) ->
 add_tweet(DocId, Tweet) ->
   gen_server:cast(process_name(DocId), {add_tweet, Tweet}).
 
--spec set_hash_tags(document_id(), [binary()]) -> ok.
-set_hash_tags(DocId, HashTags) ->
-  gen_server:cast(process_name(DocId), {set_hash_tags, HashTags}).
+-spec set_hash_tags(document_id(), term(), [binary()]) -> ok.
+set_hash_tags(DocId, Token, HashTags) ->
+  gen_server:cast(process_name(DocId), {set_hash_tags, HashTags, Token}).
 
 -spec stop(document_id()) -> ok.
 stop(DocId) ->
@@ -82,6 +82,14 @@ title(DocId) ->
 -spec body(document_id()) -> string().
 body(DocId) -> 
   gen_server:call(process_name(DocId), body).
+
+-spec edit_title(document_id(), term(), diff()) -> ok.
+edit_title(DocId, Token, Diff) ->
+  gen_server:cast(process_name(DocId), {edit_tittle, Diff, Token}).
+
+-spec edit_body(document_id(), term(), diff()) -> ok.
+edit_body(DocId, Token, Diff) ->
+  gen_server:cast(process_name(DocId), {edit_body, Diff, Token}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -121,12 +129,12 @@ handle_cast({add_tweet, Tweet}, State) ->
   #edit_document{id = DocId} = State#state.document,
   ok = edit_db:add_tweet(DocId, Tweet),
   gen_event:notify(event_dispatcher(DocId, local),
-                   {outbound_message, <<"tweet">>, edit_util:mochi_to_jsx(Tweet)}),
+                   {outbound_message, <<"tweet">>, edit_util:mochi_to_jsx(Tweet), undefined}),
   {noreply, State};
-handle_cast({set_hash_tags, HashTags}, State) ->
+handle_cast({set_hash_tags, HashTags, Token}, State) ->
   #edit_document{id = DocId} = State#state.document,
   NewDocument = State#state.document#edit_document{hash_tags = HashTags},
-  ok = edit_db:set_hash_tags(DocId, HashTags),
+  ok = edit_db:add_version(NewDocument),
   ok = edit_itweep:update_document(NewDocument),
   edit_document_handler:unsubscribe(DocId),
   try edit_document_handler:subscribe(NewDocument)
@@ -135,7 +143,21 @@ handle_cast({set_hash_tags, HashTags}, State) ->
       ?ERROR("Document ~s couldn't subscribe to the twitter stream.  No tweets for it.~n", [DocId])
   end,
   gen_event:notify(event_dispatcher(DocId, local),
-                   {outbound_message, <<"set_hash_tags">>, HashTags}),
+                   {outbound_message, <<"set_hash_tags">>, HashTags, Token}),
+  {noreply, State#state{document = NewDocument}};
+handle_cast({edit_title, Diff, Token}, State) ->
+  #edit_document{id = DocId, title = Title} = State#state.document,
+  NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Title)},
+  ok = edit_db:add_version(NewDocument),
+  gen_event:notify(event_dispatcher(DocId, local),
+                   {outbound_message, <<"edit_title">>, Diff, Token}),
+  {noreply, State#state{document = NewDocument}};
+handle_cast({edit_body, Diff, Token}, State) ->
+  #edit_document{id = DocId, body = Body} = State#state.document,
+  NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body)},
+  ok = edit_db:add_version(NewDocument),
+  gen_event:notify(event_dispatcher(DocId, local),
+                   {outbound_message, <<"edit_body">>, Diff, Token}),
   {noreply, State#state{document = NewDocument}};
 handle_cast(_Msg, State) ->
   {noreply, State}.
@@ -163,3 +185,5 @@ terminate(Reason, State) ->
 -spec code_change(any(), any(), any()) -> {ok, any()}.
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
+
+apply_diff(Diff, Something) -> Something.
