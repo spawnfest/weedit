@@ -24,7 +24,11 @@ start_link() ->
 %% @doc  Starts a document process
 -spec start_doc(document_id()) -> {ok, pid()}.
 start_doc(DocId) ->
-  supervisor:start_child(?MODULE, [DocId]).
+  case supervisor:start_child(?MODULE, [DocId]) of
+    {ok, Pid} -> {ok, Pid};
+    {error, {already_started, Pid}} -> {ok, Pid};
+    Error -> throw(Error)
+  end.
 
 %% @private
 -spec init([]) -> {ok, {{simple_one_for_one, 5, 1}, [supervisor:child_spec()]}}.

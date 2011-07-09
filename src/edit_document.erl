@@ -13,6 +13,7 @@
 -behaviour(gen_server).
 
 -export([create/0, start_link/1]).
+-export([event_dispatcher/2, process_name/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 -include("elog.hrl").
@@ -34,14 +35,41 @@ create() ->
 %% @doc Starts a listener
 -spec start_link(document_id()) -> {ok, pid()}.
 start_link(DocId) ->
-  gen_server:start_link({local, ?MODULE}, ?MODULE, DocId, []).
+  gen_server:start_link({local, process_name(DocId)}, ?MODULE, DocId, []).
+
+-spec event_dispatcher(document_id()) -> {global, atom()}.
+event_dispatcher(DocId) ->
+  {global, event_dispatcher(DocId, local)}.
+-spec event_dispatcher(document_id(), local) -> atom().
+event_dispatcher(DocId, local) ->
+  list_to_atom("edit-document-" ++ DocId).
+
+-spec process_name(document_id()) -> {global, atom()}.
+process_name(DocId) ->
+  {global, process_name(DocId, local)}.
+-spec process_name(document_id(), local) -> atom().
+process_name(DocId, local) ->
+  list_to_atom("edit-document-" ++ DocId).
+
+-spec stop(document_id()) -> ok.
+stop(DocId) ->
+  ?INFO("Manually stopping ~s~n", [DocId]),
+  try
+    gen_server:call(process_name(DocId), stop)
+  catch
+    _:{noproc, _} -> ok;
+    _:Reason ->
+      ?WARN("Couldn't stop ~s: ~p~n", [DocId, Reason]),
+      ok
+  end.
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
-
-init(Args) ->
-  {ok, Args}.
+-spec init(document_id()) -> {ok, state()}.
+init(DocId) ->
+  {ok, Doc} = edit_db:document(DocId),
+  {ok, #state{document = Doc}}.
 
 handle_call(_Request, _From, State) ->
   {noreply, ok, State}.
