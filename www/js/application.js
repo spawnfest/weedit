@@ -62,7 +62,11 @@ var TSocket = {
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":diff});
+    this.object.send({"doc_id":this.doc_id,"action":"title","diff":diff});
+  },
+  doSetTwitter: function(term) { 
+    console.log(term); 
+    this.object.send({"doc_id":this.doc_id,"action":"set_twitter","hashtag":term});
   }
 }
 
@@ -176,6 +180,48 @@ var RefreshTweetList = {
 	}
 }
 
+var GetHashTerms = {
+	init: function() {
+		var terms=["#testing","#tweet","#typesocial","#allyourspawnarebelongtous"];
+		
+		jQuery.each(terms, function() {
+			if($("#searchterms > div").size() < 10) {
+				$('<div><div class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
+			}
+			
+			if($("#searchterms > div").size() == 10) {
+				$('#addterm').remove();
+			}
+		});
+	}
+}
+
+var AddHashTerm = {
+	init: function() {
+		var terms=["#new term","#new tweet","#more stuff","#illegal","#stopnow"];
+		jQuery.each(terms, function() {
+			if($("#searchterms > div").size() < 10) {
+				$('<div><div class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
+			}
+			
+			if($("#searchterms > div").size() == 10) {
+				$('#addterm').remove();
+			}
+		});
+	},
+	add: function(term) {
+		if($("#searchterms > div").size() < 10) {
+			sanitizedterm	= "#" + term
+			$('<div><div class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
+			TSocket.doSetTwitter(sanitizedterm);
+		}
+		
+		if($("#searchterms > div").size() == 10) {
+			$('#addterm').remove();
+		}		
+	}
+}
+
 var LoginBox = {
 	init: function() {
 	 	var	getridofthiswhenwehavesession = '';
@@ -219,6 +265,54 @@ var LoginBox = {
 	    });     
 	     
 	    //if mask is clicked
+	    //$('#mask').click(function () {
+	    //    $(this).hide();
+	    //    $('.window').hide();
+	    //});
+	}
+}
+
+var LoadSearchTerm = {
+	open: function() {
+	 	
+	    //Cancel the link behavior
+	    //e.preventDefault();
+	    //Get the A tag
+		var id = $('#newsearchterm');
+	 
+	    //Get the screen height and width
+	    var maskHeight = $(document).height();
+	    var maskWidth = $(window).width();
+	 
+	    //Set height and width to mask to fill up the whole screen
+	    $('#mask').css({'width':maskWidth,'height':maskHeight});
+	     
+	    //transition effect     
+	    $('#mask').fadeIn(1000);    
+	    $('#mask').fadeTo("slow",0.8);  
+	 
+	    //Get the window height and width
+	    var winH = $(window).height();
+	    var winW = $(window).width();
+		
+		//Set the popup window to center
+		$(id).css('top',  winH/2-$(id).height()/2);
+		$(id).css('left', winW/2-$(id).width()/2);
+	          
+	    //transition effect
+	    $(id).fadeIn(2000); 
+     
+	    //if close button is clicked
+	    $('.window .addnewterm').click(function (e) {
+	        //Cancel the link behavior
+	        e.preventDefault();	       	   
+	        AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
+	        
+	        $('#mask, .window').hide();
+	    });
+	
+	     
+	    //if mask is clicked
 	    $('#mask').click(function () {
 	        $(this).hide();
 	        $('.window').hide();
@@ -239,11 +333,20 @@ var LoadTweetBox = {
 		});
 	}
 }
+
+
 $(document).ready(function(){
 
   TypeSocial.init();
   RefreshClientList.load();
-  RefreshTweetList.load();
+  GetHashTerms.init();
+  RefreshTweetList.load();  
   LoadTweetBox.init();
   LoginBox.init();
+  AddHashTerm.init();
+  
+  
+  $('#addterm').click(function() {
+	  LoadSearchTerm.open();
+  });
 });
