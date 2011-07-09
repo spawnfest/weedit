@@ -1,6 +1,7 @@
 body {
 	font-family: arial, sans-serif;	
-	background-image:url('images/background.png');
+	background-color: #5CB3FF;
+	/*background-image:url('images/background.png');*/
 }
 
 hr {
@@ -13,14 +14,49 @@ hr {
 	height:auto !important;
 }
 
-# Index page styling
+/* Generic page styling */
+.logo {
+	position: absolute; top: 10px; left:5px;
+}
 
-#loginbanner {
-	
+#tagline {
+	position: absolute; top: 15px; left:275px;
+}
+
+#heading {
+	font-size:24pt;
+}
+
+#header {
+	min-height:57px;
+}
+
+/* Index page styling */
+
+#loginpanel {
+	max-height: 300px;
+	margin: 20px;
+	background-color: white;
+	min-height:400px;
+	max-height:400px;
+	height:auto !important;
+	-moz-border-radius: 7px;
+  	border-radius: 7px;
+  	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
 
 
-# Document page styling
+/* Document page styling */
+#document_title {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	font-size: 32pt;
+	vertical-align: top;
+	width: 940px;
+}
 .documentheader {
 	
 }
@@ -33,12 +69,35 @@ hr {
 	
 }
 
-.usersidebar {
-	
+/* User side bar styling */
+#userlist {
+	background-color: white;
+	min-height:520px;
+	max-height:520px;
+	height:auto !important;
+	-moz-border-radius: 7px;
+  	border-radius: 7px;
+  	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
+
+/* Twitter side bar styling */
 
 .twittersidebar {
 	
+}
+
+#tweets {
+	background-color: white;
+	min-height:400px;
+	max-height:400px;
+	height:auto !important;
+	-moz-border-radius: 7px;
+  	border-radius: 7px;
+  	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
 
 #palette {

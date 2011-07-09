@@ -10,23 +10,36 @@
 		<script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>
 		<script type="text/javascript" src="js/json2.js"></script>
 		<script type="text/javascript" src="js/socket.io.js"></script>
-	  <script type="text/javascript" src="js/ckeditor/ckeditor.js"></script>
-	  <script type="text/javascript" src="js/ckeditor/adapters/jquery.js"></script>
-	  <script type="text/javascript" src="js/diff/diff_match_patch.js"></script>
-	  <script type="text/javascript" src="js/application.js"></script>
-	  <script src="http://platform.twitter.com/anywhere.js?id=wvVPSaN4aH4Sx9hy59DbEQ&v=1" type="text/javascript"></script>
+	  	<script type="text/javascript" src="js/ckeditor/ckeditor.js"></script>
+	  	<script type="text/javascript" src="js/ckeditor/adapters/jquery.js"></script>
+	  	<script type="text/javascript" src="js/diff/diff_match_patch.js"></script>
+	  	<script type="text/javascript" src="js/application.js"></script>
+	  	<script src="http://platform.twitter.com/anywhere.js?id=wvVPSaN4aH4Sx9hy59DbEQ&v=1" type="text/javascript"></script>
 	</head>
-	<body>
-		<div class="span-24">
-			<div class="span-5">
-				
+	<body>		
+		<div class="container showgrid">
+			<div id="header" class="span-24">
 			</div>
-			<div class="span-12">
-			    <textarea name="editor" id="editor"></textarea>				
+			<div class="span-24">
+				<div class="span-4 logo">
+					<img id="logo" src="images/logo_1.png" alt="TypeSocial"/>
+				</div>	
+				<div id="title" class="span-8 last">
+					<input id="document_title" type="text">
+				</div>
 			</div>
-			<div class="span-5">
-				<div id="tbox"></div>
-			</div>			
+			<div class="span-24">
+				<div class="span-5">
+					<div id="userlist"></div>
+				</div>
+				<div class="span-14 last">
+				    <textarea name="editor" id="editor"></textarea>				
+				</div>
+				<div class="span-5 last">
+					<div id="tweets"></div>
+					<div id="tbox"></div>
+				</div>			
+		</div>
 		</div>
 	</body>
 	<script type="text/javascript">
@@ -34,9 +47,10 @@
   		twttr.anywhere(function (T) {
 
     	T("#tbox").tweetBox({
-      		height: 100,
-      		width: 400,
-      		defaultContent: "<YOUR DEFAULT TWEETBOX CONTENT HERE>"
+			label: "Thoughts?",
+      		height: 50,
+      		width: 190,
+      		defaultContent: "<Type Socially!>"
     	});
   });
 

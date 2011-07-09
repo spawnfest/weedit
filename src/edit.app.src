@@ -8,4 +8,3 @@
   {mod, { edit, []}},
   {env, []}
  ]}.
-%% vim: set filetype=erlang tabstop=2
