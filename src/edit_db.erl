@@ -1,4 +1,4 @@
--module(edb).
+-module(edit_db).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 -define(DOC_TABLE,documents).

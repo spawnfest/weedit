@@ -1,4 +1,4 @@
--module(client_handler).
+-module(edit_client_handler).
 -behaviour(gen_event).
 -define(SERVER, ?MODULE).
 

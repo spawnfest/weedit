@@ -54,7 +54,7 @@ init(Port) -> {ok, #state{port = Port}}.
 %% @end
 %%--------------------------------------------------------------------
 handle_event({client, Pid}, State) ->
-  ok = client_handler:start(Pid),
+  ok = edit_client_handler:start(Pid),
   {ok, State};
 handle_event({message, ClientPid, Smsg}, State) ->
   Cmd = case Smsg of
