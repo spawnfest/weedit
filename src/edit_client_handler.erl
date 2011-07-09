@@ -42,11 +42,11 @@ handle_event({outbound_message, Action, MessagePropList, FromClientPid}, State) 
     FromClientPid -> noop; %% the result of a message from ourselves, eat it...
     Pid -> 
       socketio_client:send(Pid,
-       #msg{json = true,
-        content = [
-           {<<"error">>, false},
-           {<<"action">>,Action} | MessagePropList       
-          ]})
+                           #msg{json = true,
+                                content = [
+                                           {<<"error">>, false},
+                                           {<<"action">>,Action} | MessagePropList       
+                                          ]})
   end;
 
 handle_event({document_EXIT, DocId, Reason}, State) ->
@@ -54,14 +54,14 @@ handle_event({document_EXIT, DocId, Reason}, State) ->
   {ok,State}.
 
 handle_call(_Request, State) ->
-    Reply = ok,
-    {ok, Reply, State}.
+  Reply = ok,
+  {ok, Reply, State}.
 
 handle_info(_Info, State) ->
-    {ok, State}.
+  {ok, State}.
 
 terminate(_Reason, _State) ->
-    ok.
+  ok.
 
 code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+  {ok, State}.

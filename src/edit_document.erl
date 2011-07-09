@@ -16,8 +16,8 @@
 -export([event_dispatcher/1, process_name/1, stop/1]).
 -export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
--export([title/1, body/1]).
--export([set_hash_tags/3, edit_title/3, edit_body/3]).
+-export([document/1]).
+-export([set_hash_tags/3, edit_title/3, edit_body/3, login/3]).
 
 -include("elog.hrl").
 -include("socketio.hrl").
@@ -75,13 +75,9 @@ stop(DocId) ->
       ok
   end.
 
--spec title(document_id()) -> string().
-title(DocId) ->
-  gen_server:call(process_name(DocId), title).
-
--spec body(document_id()) -> string().
-body(DocId) -> 
-  gen_server:call(process_name(DocId), body).
+-spec document(document_id()) -> #edit_document{}.
+document(DocId) ->
+  gen_server:call(process_name(DocId), document).
 
 -spec edit_title(document_id(), term(), diff()) -> ok.
 edit_title(DocId, Token, Diff) ->
@@ -90,6 +86,10 @@ edit_title(DocId, Token, Diff) ->
 -spec edit_body(document_id(), term(), diff()) -> ok.
 edit_body(DocId, Token, Diff) ->
   gen_server:cast(process_name(DocId), {edit_body, Diff, Token}).
+
+-spec login(document_id(), term(), #edit_user{}) -> ok.
+login(DocId, Token, User) ->
+  gen_server:cast(process_name(DocId), {login, User, Token}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -116,8 +116,8 @@ init(DocId) ->
 
 %% @hidden
 -spec handle_call(term(), reference(), state()) -> {reply, term(), state()} | {stop, normal, ok, state()}.
-handle_call(title, _From, State) ->
-  {reply, State#state.document#edit_document.title, State};
+handle_call(document, _From, State) ->
+  {reply, State#state.document, State};
 handle_call(body, _From, State) ->
   {reply, State#state.document#edit_document.body, State};
 handle_call(stop, _From, State) ->
@@ -158,6 +158,21 @@ handle_cast({edit_body, Diff, Token}, State) ->
   ok = edit_db:add_version(NewDocument),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"edit_body">>, Diff, Token}),
+  {noreply, State#state{document = NewDocument}};
+handle_cast({login, User, Token}, State) ->
+  #edit_document{id = DocId, users = Users} = State#state.document,
+  NewUsers = lists:keystore(User#edit_user.id, #edit_user.id, Users, User),
+  NewDocument = State#state.document#edit_document{users = NewUsers},
+  ok = edit_db:add_version(NewDocument),
+  ok = edit_itweep:update_document(NewDocument),
+  edit_document_handler:unsubscribe(DocId),
+  try edit_document_handler:subscribe(NewDocument)
+  catch
+    throw:couldnt_subscribe ->
+      ?ERROR("Document ~s couldn't subscribe to the twitter stream.  No tweets for it.~n", [DocId])
+  end,
+  gen_event:notify(event_dispatcher(DocId, local),
+                   {outbound_message, <<"set_users">>, edit_util:to_jsx(Users), Token}),
   {noreply, State#state{document = NewDocument}};
 handle_cast(_Msg, State) ->
   {noreply, State}.

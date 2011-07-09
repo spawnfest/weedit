@@ -21,6 +21,7 @@
 
 -include("elog.hrl").
 -include("socketio.hrl").
+-include("edit_records.hrl").
 
 -record(state, {port :: pos_integer()}).
 -type state() :: #state{}.
@@ -87,10 +88,12 @@ handle_request('GET', [], Req) ->
 handle_request('GET', [ "doc", DocId] , Req) ->
   ?INFO("IN DOC MUSTASHIN ~p ~n",[DocId]),
   %% Req:file(filename:join(["www","document.html"]));
-  Mustaches = dict:from_list([{title, edit_document:title(DocId)},
-                              {body, edit_document:body(DocId)}]),
-      {ok, FileData} = file:read_file(filename:join(["www","document.html"])),
-      Req:ok(mustache:render(FileData,Mustaches));
+  Document = edit_document:document(DocId),
+  Mustaches = dict:from_list([{title, Document#edit_document.title},
+                              {body, Document#edit_document.body},
+                              {hash_tags, Document#edit_document.hash_tags}]),
+  {ok, FileData} = file:read_file(filename:join(["www","document.html"])),
+  Req:ok(mustache:render(FileData,Mustaches));
 
 %% these are only here because matt and manuel are self hosting and can't properly path the files..
 %% remove when they self host
