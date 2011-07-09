@@ -13,21 +13,21 @@ handle_command(ClientPid, <<"hello">>, DocId, Data) ->
 handle_command(_ClientPid, <<"login">>, DocId, Data) -> 
   noreply;
 
-handle_command(_ClientPid, <<"set_twitter">>, DocId, Data) -> 
+handle_command(ClientPid, <<"set_twitter">>, DocId, Data) -> 
   HashTags = edit_util:safe_term_to_binary(proplists:get_value(<<"hashtag">>, Data, <<>>)),
-  edit_document:set_hash_tags(DocId,HashTags),
+  edit_document:set_hash_tags(DocId,ClientPid,HashTags),
   noreply;
  
 %% diff title
-handle_command(_ClientPid, <<"title">>, DocId, Data) -> 
+handle_command(ClientPid, <<"title">>, DocId, Data) -> 
   TitleDiff = edit_util:safe_term_to_binary(proplists:get_value(<<"diff">>, Data, <<>>)),
   ?INFO("got title diff: ~p ~n",[TitleDiff]),
-  edit_document:edit_title(DocId,TitleDiff),
+  edit_document:edit_title(DocId,ClientPid,TitleDiff),
   noreply;
  
-handle_command(_ClientPid, <<"doc">>, DocId, Data) -> 
+handle_command(ClientPid, <<"body">>, DocId, Data) -> 
   DocDiff = edit_util:safe_term_to_binary(proplists:get_value(<<"diff">>, Data, <<>>)),
   ?INFO("got diff of document: ~p ~n",[DocDiff]),
-  edit_document:edit_doc(DocId,DocDiff),
+  edit_document:edit_body(DocId,ClientPid,DocDiff),
   noreply.
 

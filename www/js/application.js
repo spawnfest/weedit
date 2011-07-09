@@ -98,10 +98,11 @@ var TypeSocial = {
   },
   checkTitle: function () {
     console.log("Checking title...");
-    if (this.title_last_rev != this.title.val()) {
-       diff = this.dmp.getDiff(this.title.val(),this.title_last_rev);
-       this.title_last_rev = this.title.val();
-       this.socket.dosetTitle(diff);
+
+    if (TypeSocial.title_last_rev != TypeSocial.title.val()) {
+       diff = TypeSocial.dmp.getDiff(TypeSocial.title.val(),TypeSocial.title_last_rev);
+       TypeSocial.title_last_rev = TypeSocial.title.val();
+       TypeSocial.socket.doSetTitle(diff);
     }
   },
   setTitle: function(diff) {
@@ -123,7 +124,7 @@ var TypeSocial = {
     }
 
     // Let's monitor title changes
-//setInterval(this.checkTitle,100);
+    setInterval(this.checkTitle(TypeSocial),100);
 
 
   }

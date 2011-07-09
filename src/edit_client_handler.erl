@@ -44,12 +44,13 @@ handle_event({message, ClientPid, SMsg}, State) ->
       end,
   {ok, State};
 
-handle_event({outbound_message, Action, MessagePropList}, State) ->
+handle_event({outbound_message, Action, MessagePropList, FromClientPid}, State) ->
   ClientPid = State#state.client_pid,
   case ClientPid of
     none -> 
       ?INFO("oh no we got a mesage for a client but we don't know how to phone home: ~p: ~p ~n",[Action,MessagePropList]),
       noop;
+    FromClientPid -> noop; %% the result of a message from ourselves, eat it...
     Pid -> 
       socketio_client:send(Pid,
        #msg{json = true,
@@ -57,7 +58,11 @@ handle_event({outbound_message, Action, MessagePropList}, State) ->
            {<<"error">>, false},
            {<<"action">>,Action} | MessagePropList       
           ]})
-  end.
+  end;
+
+handle_event({document_EXIT, DocId, Reason}, State) ->
+  ?INFO("TODO DOC EXIT",[]),
+  {ok,State}.
 
 handle_call(_Request, State) ->
     Reply = ok,

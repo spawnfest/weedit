@@ -85,6 +85,7 @@ handle_request('GET', [], Req) ->
 %% all documents - rendered with title and body to the latest version
 
 handle_request('GET', [ "doc", DocId] , Req) ->
+  ?INFO("IN DOC MUSTASHIN ~p ~n",[DocId]),
   %% Req:file(filename:join(["www","document.html"]));
   Mustaches = dict:from_list([{title, edit_document:title(DocId)},
                               {body, edit_document:body(DocId)}]),
