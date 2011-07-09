@@ -106,7 +106,7 @@ handle_event(Tweet, State = #state{accept_pattern   = Pattern,
               lists:keymember(TweepId, #edit_user.id, Document#edit_document.users)} of
           {nomatch, false} ->
             discarded;
-          {_Match, true} ->
+          _ ->
             edit_document:add_tweet(Document#edit_document.id, Tweet),
             accepted
         end,
