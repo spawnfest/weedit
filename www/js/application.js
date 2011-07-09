@@ -277,14 +277,16 @@ var LoginBox = {
         $(id).fadeIn(2000); 	    
 	     
 	    //if close button is clicked
-	    $('.window #follow-placeholder').click(function (e) {
+	    $('.window .close').click(function (e) {
 	        //Cancel the link behavior
 	        e.preventDefault();
 	        $('#mask, .window').hide();
 	    });	    	   
 	   	
 	    twttr.anywhere(function (T) {
-			T("#follow-placeholder").followButton('TypeSocial');
+	    	document.getElementById("follow-placeholder").onclick = function () {
+	    		T.signIn();
+	    	};
 		});
 	    //if mask is clicked
 	    //$('#mask').click(function () {
