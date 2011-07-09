@@ -27,9 +27,13 @@ start_link() ->
 
 
 random_document_name() -> 
-   lists:flatten(lists:foldl(fun(X,AccIn) ->
+  Name = lists:flatten(lists:foldl(fun(X,AccIn) ->
         [random:uniform(25) + 96|AccIn] end,
         [], lists:seq(1,10))).
+  case ets:member(?DOC_TABLE, Name) of 
+    true  -> random_document_name();
+    false -> Name
+  end.
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
