@@ -8,9 +8,10 @@
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
 
 -include("elog.hrl").
+-include("edit_records.hrl").
 
 -export([get_env/1, set_env/2, random_url/0, safe_term_to_binary/1, to_lower/1]).
--export([mochi_to_jsx/1]).
+-export([mochi_to_jsx/1, to_jsx/1]).
 
 %% @doc Returns application:get_env(edit, Field) or its default value
 -spec get_env(atom()) -> term().
@@ -76,3 +77,7 @@ mochi_to_jsx({List}) when is_list(List) ->
 mochi_to_jsx(Other) -> Other.
 
 mochi_to_jsx_prop({Key, Value}) -> {Key, mochi_to_jsx(Value)}.
+
+-spec to_jsx(term()) -> [proplists:property()].
+to_jsx(#edit_user{id = Id, username = Name}) ->
+  [{<<"id">>, Id}, {<<"username">>, Name}].
