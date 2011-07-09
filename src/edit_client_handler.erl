@@ -12,7 +12,7 @@
 -include("socketio.hrl").
 -include("misultin.hrl").
 
--record(state, {client_pid=none}).
+-record(state, {client_pid = none :: none | pid()}).
 
 start(Pid) ->
   gen_event:add_handler(socketio_client:event_manager(Pid), ?MODULE, []).
@@ -30,18 +30,7 @@ handle_event({message, ClientPid, SMsg}, State) ->
         #msg{content = Text, json = false} ->
           {text, unknown, Text}
       end,
-      case edit_api:handle_command(ClientPid, Command, DocumentId, Data) of
-          {ok, Response} -> 
-            socketio_client:send(ClientPid,
-             #msg{json = true,
-              content = [{<<"error">>, false},
-                     {<<"result">>, iolist_to_binary(io_lib:format("~p", [Response]))}]});
-          {error, Why } -> 
-             #msg{json = true,
-                  content = [{<<"error">>, true},
-                         {<<"result">>, iolist_to_binary(io_lib:format("~p", [Why]))}]};
-          noreply -> noreply
-      end,
+  noreply = edit_api:handle_command(ClientPid, Command, DocumentId, Data),
   {ok, State};
 
 handle_event({outbound_message, Action, MessagePropList, FromClientPid}, State) ->
