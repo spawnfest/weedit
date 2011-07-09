@@ -1,4 +1,4 @@
--module(client_handler).
+-module(edit_client_handler).
 -behaviour(gen_event).
 -define(SERVER, ?MODULE).
 
@@ -13,10 +13,7 @@
 -record(state, {}).
 
 start(Pid) ->
-  {ok, Pid}.
-
-add_handler() ->
-    gen_event:add_handler(?SERVER, ?MODULE, []).
+  gen_event:add_handler(socketio_client:event_manager(Pid), ?MODULE, []).
 
 init([]) -> {ok, #state{}}.
 

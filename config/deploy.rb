@@ -26,7 +26,7 @@ namespace :deploy do
   namespace :ts do
 
     task :build, :roles => :app do
-      run "cd /var/web/ts; make"
+      run "cd /var/web/ts/current; make"
     end
   end
 
