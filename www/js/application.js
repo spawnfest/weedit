@@ -34,11 +34,11 @@ var TSocket = {
     this.object = new io.Socket(hostname, {port:port});
     this.object.connect();
 
-    this.doc_id = location.pathname.split("/")[2]
+    this.doc_id = location.pathname.split("/")[2];
 
     this.object.on('connect', function(){
       console.log("We connected!!");
-      this.doHello();
+      TSocket.doHello();
     });
 
 
@@ -49,7 +49,7 @@ var TSocket = {
 
   },
   doHello: function(){
-    this.object.send({"doc_id":doc_id,"action":"title");
+    this.object.send({"doc_id":this.doc_id,"action":"hello"});
   },
   doLogin: function(id,username) { 
     console.log("id and username = " + [id,username]); 
