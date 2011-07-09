@@ -17,6 +17,7 @@
 
 -include("elog.hrl").
 -include("socketio.hrl").
+-include("edit_records.hrl").
 
 -record(state, {document :: #edit_document{}}).
 -type state() :: #state{}.
@@ -31,10 +32,9 @@ create() ->
   edit_doc_sup:start_doc(DocId).
 
 %% @doc Starts a listener
--spec start_link(pos_integer()) -> {ok, pid()}.
-
-start_link() ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+-spec start_link(document_id()) -> {ok, pid()}.
+start_link(DocId) ->
+  gen_server:start_link({local, ?MODULE}, ?MODULE, DocId, []).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
