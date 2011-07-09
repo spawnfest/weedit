@@ -27,10 +27,11 @@
 %% PUBLIC API
 %%-------------------------------------------------------------------
 %% @doc Creates a brand new document
--spec create() -> {ok, pid()}.
+-spec create() -> {ok, document_id()}.
 create() ->
   {ok, DocId} = edit_db:create_document(),
-  edit_doc_sup:start_doc(DocId).
+  {ok, _Pid} = edit_doc_sup:start_doc(DocId),
+  {ok, DocId}.
 
 %% @doc Starts a listener
 -spec start_link(document_id()) -> {ok, pid()}.
@@ -68,7 +69,16 @@ stop(DocId) ->
 %% ------------------------------------------------------------------
 -spec init(document_id()) -> {ok, state()}.
 init(DocId) ->
+  ?INFO("Starting ~s~n", [DocId]),
   {ok, Doc} = edit_db:document(DocId),
+  DispPid =
+    case gen_event:start_link(event_dispatcher(DocId)) of
+      {ok, DPid} ->
+        true = erlang:register(event_dispatcher(DocId, local), DPid),
+        DPid;
+      {error, {already_started, DPid}} -> DPid
+    end,
+  ?INFO("Event dispatcher for ~s running in ~p~n", [DocId, DispPid]),
   {ok, #state{document = Doc}}.
 
 handle_call(_Request, _From, State) ->

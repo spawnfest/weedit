@@ -2,7 +2,6 @@
 -record(edit_user, {id        :: pos_integer(),
                     username  :: string()}).
 -record(edit_document, {id        :: document_id(),
-                        url       :: string(),
                         title     :: string(),
                         owner     :: #edit_user{},
                         users     :: [#edit_user{}],
