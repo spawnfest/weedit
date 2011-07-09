@@ -24,8 +24,8 @@ handle_command(ClientPid, <<"set_twitter">>, DocId, Data) ->
   noreply;
  
 %% diff title
-handle_command(ClientPid, <<"title">>, DocId, Data) -> 
-  TitleDiff = edit_util:safe_term_to_binary(proplists:get_value(<<"diff">>, Data, <<>>)),
+handle_command(ClientPid, <<"edit_title">>, DocId, Data) -> 
+  TitleDiff = proplists:get_value(<<"diff">>, Data, <<>>),
   ?INFO("got title diff: ~p ~n",[TitleDiff]),
   edit_document:edit_title(DocId,ClientPid,TitleDiff),
   noreply;

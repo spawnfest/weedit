@@ -43,13 +43,12 @@ var TSocket = {
 
 
     this.object.on('message', function(data){
-      console.log(data);
       switch(data.action) {
-        case 'title':
+        case 'edit_title':
           TypeSocial.setTitle(data.diff)
           break;
         default:
-          console.log("I don't know this action");
+          console.log("I don't know this action" + data);
       }
     });
 
@@ -63,7 +62,7 @@ var TSocket = {
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"title","diff":diff});
+    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":diff});
   },
   doSetTwitter: function(term) { 
     console.log(term); 
@@ -106,13 +105,14 @@ var TypeSocial = {
 
     if (this.title_last_rev != this.title.val()) {
        console.log(this);
-       diff = this.dmp.getDiff(this.title.val(),this.title_last_rev);
+       diff = this.dmp.getDiff(this.title_last_rev,this.title.val());
        this.title_last_rev = this.title.val();
        this.socket.doSetTitle(diff);
     }
   },
   setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
+    this.title_last_rev = this.title.val();
   },
   startInterval: function(interval){
     var instance = this;
@@ -137,7 +137,7 @@ var TypeSocial = {
     }
 
     // Let's monitor title changes
-    //this.startInterval(1000);
+    this.startInterval(1000);
 
 
   }

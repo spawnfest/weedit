@@ -2,7 +2,7 @@ ERL					?= erl
 ERLC				= erlc
 EBIN_DIRS		:= $(wildcard deps/*/ebin)
 NODE				= semipro
-RUN 				:= +Bc +K true -smp enable -pa ebin deps/*/ebin -s crypto -s inets -s ssl -s elog -s ibrowse -s socketio
+RUN 				:= +Bc +K true -smp enable -pa ebin deps/*/ebin -s crypto -s inets -s ssl -s elog -s ibrowse -s socketio -s erlang_js
 
 
 .PHONY: rel deps
