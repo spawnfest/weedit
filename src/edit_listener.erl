@@ -79,7 +79,11 @@ code_change(_OldVsn, State, _Extra) ->
 %% @private
 -spec handle_request(atom(), [string()], term()) -> term().
 handle_request('GET', [], Req) ->
-  handle_request('GET', ["index.html"], Req);
+  %%handle_request('GET', ["index.html"], Req);
+  {ok,Document} = edit_document:create(),
+  Req:respond(302, [{"Location","/" ++ Document}], [], nil);
+
 handle_request('GET', Path, Req) ->
   ?INFO("~p~n", [Path]),
   Req:file(filename:join(["www"| Path])).
+

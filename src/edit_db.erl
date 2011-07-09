@@ -2,6 +2,7 @@
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 -define(DOC_TABLE,edit_documents).
+-define(URL_TABLE,edit_urls).
 -define(USERS_TABLE,edit_users).
 -define(VERSIONS_TABLE,edit_versions).
 
@@ -10,13 +11,8 @@
 %% ------------------------------------------------------------------
 %% API Function Exports
 %% ------------------------------------------------------------------
-
--record(dv, {document,version,patch,user}).
--record(document, {url,title,owner,users,searches}).
--record(user, {id,username}).
-
 -export([start_link/0]).
-%%-export([create_document/2,add_version/3,remove_version/3]).
+-export([document/1,create_document/0,add_version/3]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -32,7 +28,14 @@ start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
 create_document() -> 
-  Name = gen_server:call(?SERVER,new_document_url).
+  {ok,Name} = gen_server:call(?SERVER,create_document).
+
+document(Name) -> 
+  {ok,todo}.
+
+%% TODO:SPEC
+add_version(Document,User,Patch) -> 
+  gen_server:call(?SERVER,{add_version,Document,User,Patch}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -40,6 +43,10 @@ create_document() ->
 
 init(Args) ->
   {ok, Args}.
+
+handle_call(create_document, _From, State) ->
+  Name = random_document_url(),
+  {reply, {ok, Name}, State};
 
 handle_call(_Request, _From, State) ->
   {noreply, ok, State}.
@@ -60,17 +67,18 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 init_schema() -> 
+  ets:new(?URL_TABLE,[protected,set,named_table]),
   ets:new(?DOC_TABLE,[protected,set,named_table]),
   ets:new(?USERS_TABLE,[protected,set,named_table]),
   ets:new(?VERSIONS_TABLE,[protected,set,named_table]).
 
 random_document_url() -> 
-  Name = lists:flatten(lists:foldl(fun(X,AccIn) ->
-        [random:uniform(25) + 96|AccIn] end,
-        [], lists:seq(1,10))),
-  case ets:member(?DOC_TABLE, Name) of 
+  Name = edit_util:random_url(),
+  case ets:member(?URL_TABLE,{Name}) of 
     true  -> random_document_url();
-    false -> Name
+    false -> 
+      ets:insert(?URL_TABLE,{Name}),
+      Name
   end.
 
 
