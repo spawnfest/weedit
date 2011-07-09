@@ -13,10 +13,7 @@
 -record(state, {}).
 
 start(Pid) ->
-  {ok, Pid}.
-
-add_handler() ->
-    gen_event:add_handler(?SERVER, ?MODULE, []).
+  gen_event:add_handler(socketio_client:event_manager(Pid), ?MODULE, []).
 
 init([]) -> {ok, #state{}}.
 
