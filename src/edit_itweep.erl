@@ -16,7 +16,7 @@
 -record(state, {documents = [] :: [#edit_document{}]}).
 -opaque state() :: #state{}.
 
--export([start_link/0, add_document/1, remove_document/1, event_dispatcher/0, stop/0]).
+-export([start_link/0, add_document/1, update_document/1, remove_document/1, event_dispatcher/0, stop/0]).
 -export([handle_call/3, handle_event/3, handle_info/2, handle_status/2, init/1, terminate/2]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,6 +42,10 @@ stop() ->
 -spec add_document(#edit_document{}) -> ok.
 add_document(Document) ->
   itweep:call(closest_member(), {add, Document}, infinity).
+
+-spec update_document(#edit_document{}) -> ok.
+update_document(Document) ->
+  itweep:call(closest_member(), {update, Document}, infinity).
 
 -spec remove_document(document_id()) -> ok.
 remove_document(DocId) ->
@@ -69,9 +73,6 @@ init([]) ->
       {error, {already_started, P}} -> P
     end,
   ?INFO("Initialized (dispatcher: ~p), reloading episodes...~n", [Dispatcher]),
-  %%NOTE: This way episodes may re-subscribe once this process started
-  {ok, _Timer} = timer:apply_after(100, conductor_sup, reload, []),
-  ?INFO("Initialization complete~n", []),
   {ok, #state{}}.
 
 %% @hidden
@@ -119,6 +120,11 @@ handle_call({add, Document}, _From, State = #state{documents = Documents}) ->
       ?INFO("~s added, tracking ~p~n", [Document#edit_document.id, [Id || #edit_document{id = Id} <- NewDocuments]]),
       {ok, method(NewDocuments), ok, State#state{documents = NewDocuments}}
   end;
+handle_call({update, Document}, _From, State = #state{documents = Documents}) ->
+  ?INFO("Updating ~s~n", [Document#edit_document.id]),
+  NewDocuments = lists:keystore(Document#edit_document.id, #edit_document.id, Documents, Document),
+  ?INFO("~s updated, tracking ~p~n", [Document#edit_document.id, [Id || #edit_document{id = Id} <- NewDocuments]]),
+  {ok, method(NewDocuments), ok, State#state{documents = NewDocuments}};
 handle_call({remove, DocId}, _From, State = #state{documents = Documents}) ->
   ?INFO("Removing ~s~n", [DocId]),
   case lists:keydelete(DocId, #edit_document.id, Documents) of
@@ -157,8 +163,8 @@ method([]) ->
   rest;
 method(Documents) ->
   Words =
-      sets:from_list([Trend || #edit_document{searches = Trends} <- Documents,
-                               Trend <- Trends]),
+      sets:from_list([binary_to_list(HashTag) || #edit_document{hash_tags = HashTags} <- Documents,
+                                                 HashTag <- HashTags]),
   Users =
       sets:from_list([UserId || #edit_document{users = DocUsers} <- Documents,
                                 #edit_user{id = UserId} <- DocUsers]),

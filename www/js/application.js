@@ -72,7 +72,7 @@ var TSocket = {
 var TypeSocial = {
   editor: null,
   title: null,
-  title_last_rev:null,
+  title_last_rev:"",
   socket: null,
   current_user: null,
   user_list: null,
@@ -98,6 +98,14 @@ var TypeSocial = {
       console.log("Here is the data" + event);
     });
   },
+  checkTitle: function () {
+    console.log("Checking title...");
+    if (this.title_last_rev != this.title.val()) {
+       diff = this.dmp.getDiff(this.title.val(),this.title_last_rev);
+       this.title_last_rev = this.title.val();
+       this.socket.dosetTitle(diff);
+    }
+  },
   setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
   },
@@ -112,12 +120,12 @@ var TypeSocial = {
     this.dmp.init();
 
     // Set up Socket.io
-    if (location.hostname == '') {
+    if (location.hostname != '') {
     	this.socket.init(location.hostname,location.port);
     }
 
     // Let's monitor title changes
-    setInterval(this.checkTitle,100);
+    //setInterval(this.checkTitle,100);
   }
 }
 
