@@ -48,8 +48,6 @@ var TSocket = {
         case 'title':
           TypeSocial.setTitle(data.diff)
           break;
-        case 'tweet':
-          break;
         default:
           console.log("I don't know this action");
       }
@@ -77,6 +75,7 @@ var TypeSocial = {
   editor: null,
   title: null,
   title_last_rev:"",
+  timer:null,
   socket: null,
   current_user: null,
   user_list: null,
@@ -104,16 +103,26 @@ var TypeSocial = {
   },
   checkTitle: function () {
     console.log("Checking title...");
+
     if (this.title_last_rev != this.title.val()) {
+       console.log(this);
        diff = this.dmp.getDiff(this.title.val(),this.title_last_rev);
        this.title_last_rev = this.title.val();
-       this.socket.dosetTitle(diff);
+       this.socket.doSetTitle(diff);
     }
   },
   setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
   },
+  startInterval: function(interval){
+    var instance = this;
+    this.timer = setInterval(function() {instance.checkTitle();},interval);
+  },
+  stopInterval: function() {
+    clearInterval(this.timer);
+  },
   init: function(ext_config) {
+
     // Create the editor and set the config vars
     if (ext_config) {this.config = config}
     this.editor = $('#editor').ckeditor(this.onEditorReady,this.config); 
@@ -122,22 +131,22 @@ var TypeSocial = {
 
     // Set up Diff Match Patch
     this.dmp.init();
-
     // Set up Socket.io
     if (location.hostname != '') {
     	this.socket.init(location.hostname,location.port);
     }
 
     // Let's monitor title changes
-    //setInterval(this.checkTitle,100);
+    //this.startInterval(1000);
+
+
   }
 }
-
 
 var RefreshClientList = {
 	//TODO: Parse JSON
 	load: function() {
-		var users=["Chad","Fernando","Manuel","Matt","Matt","Chad"];
+		var users=["Chad","Fernando","Manuel","Matt", "Matt","Chad"];
 	
 		jQuery.each(users, function() {
 			if ($("#" + this).length == 0){			

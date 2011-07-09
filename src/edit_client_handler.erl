@@ -12,7 +12,7 @@
 -include("socketio.hrl").
 -include("misultin.hrl").
 
--record(state, {client_pid=none}).
+-record(state, {client_pid = none :: none | pid()}).
 
 start(Pid) ->
   gen_event:add_handler(socketio_client:event_manager(Pid), ?MODULE, []).
@@ -24,50 +24,44 @@ handle_event({message, ClientPid, SMsg}, State) ->
   {Command, DocumentId, Data} =
       case SMsg of
         #msg{content = MsgProps, json = true} ->
-          {edit_util:safe_term_to_binary(proplists:get_value(<<"action">>, MsgProps, <<>>)),
-           edit_util:safe_term_to_binary(proplists:get_value(<<"doc_id">>, MsgProps, <<>>)),
+          {proplists:get_value(<<"action">>, MsgProps, <<>>),
+           binary_to_list(proplists:get_value(<<"doc_id">>, MsgProps, <<>>)),
            MsgProps};
         #msg{content = Text, json = false} ->
           {text, unknown, Text}
       end,
-      case edit_api:handle_command(ClientPid, Command, DocumentId, Data) of
-          {ok, Response} -> 
-            socketio_client:send(ClientPid,
-             #msg{json = true,
-              content = [{<<"error">>, false},
-                     {<<"result">>, iolist_to_binary(io_lib:format("~p", [Response]))}]});
-          {error, Why } -> 
-             #msg{json = true,
-                  content = [{<<"error">>, true},
-                         {<<"result">>, iolist_to_binary(io_lib:format("~p", [Why]))}]};
-          noreply -> noreply
-      end,
+  noreply = edit_api:handle_command(ClientPid, Command, DocumentId, Data),
   {ok, State};
 
-handle_event({outbound_message, Action, MessagePropList}, State) ->
+handle_event({outbound_message, Action, MessagePropList, FromClientPid}, State) ->
   ClientPid = State#state.client_pid,
   case ClientPid of
     none -> 
       ?INFO("oh no we got a mesage for a client but we don't know how to phone home: ~p: ~p ~n",[Action,MessagePropList]),
       noop;
+    FromClientPid -> noop; %% the result of a message from ourselves, eat it...
     Pid -> 
       socketio_client:send(Pid,
-       #msg{json = true,
-        content = [
-           {<<"error">>, false},
-           {<<"action">>,Action} | MessagePropList       
-          ]})
-  end.
+                           #msg{json = true,
+                                content = [
+                                           {<<"error">>, false},
+                                           {<<"action">>,Action} | MessagePropList       
+                                          ]})
+  end;
+
+handle_event({document_EXIT, DocId, Reason}, State) ->
+  ?INFO("TODO DOC EXIT",[]),
+  {ok,State}.
 
 handle_call(_Request, State) ->
-    Reply = ok,
-    {ok, Reply, State}.
+  Reply = ok,
+  {ok, Reply, State}.
 
 handle_info(_Info, State) ->
-    {ok, State}.
+  {ok, State}.
 
 terminate(_Reason, _State) ->
-    ok.
+  ok.
 
 code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+  {ok, State}.
