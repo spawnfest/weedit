@@ -1,7 +1,9 @@
 -module(edit_db).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
--define(DOC_TABLE,documents).
+-define(DOC_TABLE,edit_documents).
+-define(USERS_TABLE,edit_users).
+-define(VERSIONS_TABLE,edit_versions).
 
 %% API layer for weedit
 
@@ -9,8 +11,12 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
+-record(dv, {document,version,patch,user}).
+-record(document, {url,title,owner,users,searches}).
+-record(user, {id,username}).
+
 -export([start_link/0]).
--export([random_document_name/0]).
+-export([create_document/2,add_version/3,remove_version/3]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -25,15 +31,8 @@
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-
-random_document_name() -> 
-  Name = lists:flatten(lists:foldl(fun(X,AccIn) ->
-        [random:uniform(25) + 96|AccIn] end,
-        [], lists:seq(1,10))).
-  case ets:member(?DOC_TABLE, Name) of 
-    true  -> random_document_name();
-    false -> Name
-  end.
+create_document -> 
+  Name = gen_server:call(?SERVER,new_document_url).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -61,5 +60,17 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 init_schema() -> 
-  ets:new(?DOC_TABLE,[protected,set,named_table]).
+  ets:new(?DOC_TABLE,[protected,set,named_table]),
+  ets:new(?USERS_TABLE,[protected,set,named_table]),
+  ets:new(?VERSIONS_TABLE,[protected,set,named_table]).
+
+random_document_url() -> 
+  Name = lists:flatten(lists:foldl(fun(X,AccIn) ->
+        [random:uniform(25) + 96|AccIn] end,
+        [], lists:seq(1,10))).
+  case ets:member(?DOC_TABLE, Name) of 
+    true  -> random_document_url();
+    false -> Name
+  end.
+
 
