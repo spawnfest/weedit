@@ -48,6 +48,8 @@ var TSocket = {
         case 'title':
           TypeSocial.setTitle(data.diff)
           break;
+        case 'tweet':
+          break;
         default:
           console.log("I don't know this action");
       }
@@ -119,14 +121,12 @@ var TypeSocial = {
     this.dmp.init();
 
     // Set up Socket.io
-    if (location.hostname = '') {
+    if (location.hostname != '') {
     	this.socket.init(location.hostname,location.port);
     }
 
     // Let's monitor title changes
-    setInterval(this.checkTitle(TypeSocial),100);
-
-
+    //setInterval(this.checkTitle,100);
   }
 }
 
@@ -134,7 +134,7 @@ var TypeSocial = {
 var RefreshClientList = {
 	//TODO: Parse JSON
 	load: function() {
-		var users=["Chad","Fernando","Manuel","Matt", "Matt","Chad"];
+		var users=["Chad","Fernando","Manuel","Matt","Matt","Chad"];
 	
 		jQuery.each(users, function() {
 			if ($("#" + this).length == 0){			
@@ -165,6 +165,12 @@ var RefreshTweetList = {
 				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 			}
 		});
+	}
+}
+
+var GetHashTerms = {
+	init: function() {
+		
 	}
 }
 

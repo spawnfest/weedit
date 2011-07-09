@@ -75,15 +75,18 @@ stop(DocId) ->
       ok
   end.
 
-title(DocId) -> 
-  "TODO:BRUJO".
+-spec title(document_id()) -> string().
+title(DocId) ->
+  gen_server:call(process_name(DocId), title).
 
+-spec body(document_id()) -> string().
 body(DocId) -> 
-  "TODO:BRUJO".
+  gen_server:call(process_name(DocId), body).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
+%% @hidden
 -spec init(document_id()) -> {ok, state()}.
 init(DocId) ->
   ?INFO("Starting ~s~n", [DocId]),
@@ -103,12 +106,19 @@ init(DocId) ->
   ?INFO("Event dispatcher for ~s running in ~p~n", [DocId, DispPid]),
   {ok, #state{document = Doc}}.
 
-handle_call(_Request, _From, State) ->
-  {noreply, ok, State}.
+%% @hidden
+-spec handle_call(term(), reference(), state()) -> {reply, term(), state()} | {stop, normal, ok, state()}.
+handle_call(title, _From, State) ->
+  {reply, State#state.document#edit_document.title, State};
+handle_call(body, _From, State) ->
+  {reply, State#state.document#edit_document.body, State};
+handle_call(stop, _From, State) ->
+  {stop, normal, ok, State}.
 
+%% @hidden
+-spec handle_cast(term(), state()) -> {noreply, state()}.
 handle_cast({add_tweet, Tweet}, State) ->
   #edit_document{id = DocId} = State#state.document,
-  ?INFO("New tweet for ~s~n", [DocId]),
   ok = edit_db:add_tweet(DocId, Tweet),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"tweet">>, edit_util:mochi_to_jsx(Tweet)}),
@@ -130,9 +140,13 @@ handle_cast({set_hash_tags, HashTags}, State) ->
 handle_cast(_Msg, State) ->
   {noreply, State}.
 
+%% @hidden
+-spec handle_info(term(), state()) -> {noreply, state()} | {stop, term(), state()}.
 handle_info(_Info, State) ->
   {noreply, State}.
 
+%% @hidden
+-spec terminate(any(), state()) -> any().
 terminate(Reason, State) ->
   #edit_document{id = DocId} = State#state.document,
   edit_document_handler:unsubscribe(DocId),
@@ -141,12 +155,11 @@ terminate(Reason, State) ->
       ?INFO("~s terminating~n", [DocId]);
     Reason ->
       ?WARN("~s terminating: ~p~n", [DocId, Reason])
-  end.
+  end,
+  ok = gen_event:sync_notify(event_dispatcher(DocId, local), {document_EXIT, DocId, Reason}),
+  ok = gen_event:stop(event_dispatcher(DocId, local)).
 
+%% @hidden
+-spec code_change(any(), any(), any()) -> {ok, any()}.
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
-
-%% ------------------------------------------------------------------
-%% Internal Function Definitions
-%% ------------------------------------------------------------------
-
