@@ -15,9 +15,8 @@ handle_command(_ClientPid, <<"login">>, DocId, Data) ->
 
 handle_command(_ClientPid, <<"set_twitter">>, DocId, Data) -> 
   HashTags = edit_util:safe_term_to_binary(proplists:get_value(<<"hashtag">>, Data, <<>>)),
-  %% TODO: edit_document:set_hash_tags(DocId,HashTags),
+  edit_document:set_hash_tags(DocId,HashTags),
   noreply;
-
  
 %% diff title
 handle_command(_ClientPid, <<"title">>, DocId, Data) -> 

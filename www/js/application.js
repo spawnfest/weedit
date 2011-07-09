@@ -43,8 +43,14 @@ var TSocket = {
 
 
     this.object.on('message', function(data){
-      console.log("Here's some data");
       console.log(data);
+      switch(data.action) {
+        case 'title':
+          TypeSocial.setTitle(data.diff)
+          break;
+        default:
+          console.log("I don't know this action");
+      }
     });
 
   },
@@ -55,15 +61,16 @@ var TSocket = {
     console.log("id and username = " + [id,username]); 
     //this.object.send('action':'login');
   },
-  setTitle: function(diff) { 
+  doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":doc_id,"action":"title","diff":diff});
+    this.object.send({"doc_id":this.doc_id,"action":"title","diff":diff});
   }
 }
 
 var TypeSocial = {
   editor: null,
   title: null,
+  title_last_rev:null,
   socket: null,
   current_user: null,
   user_list: null,
@@ -89,7 +96,7 @@ var TypeSocial = {
       console.log("Here is the data" + event);
     });
   },
-  receiveTitle: function(diff) {
+  setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
   },
   init: function(ext_config) {
@@ -105,10 +112,10 @@ var TypeSocial = {
     // Set up Socket.io
     this.socket.init(location.hostname,location.port);
 
-    this.socket.object.on('newtitle', function(data){
-      console.log(data);
-      TypeSocial.receiveTitle(data.diff);
-    });
+    // Let's monitor title changes
+    setInvertal(this.checkTitle,100);
+
+
   }
 }
 
