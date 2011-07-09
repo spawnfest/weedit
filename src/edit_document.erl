@@ -35,7 +35,7 @@ create() ->
 %% @doc Starts a listener
 -spec start_link(document_id()) -> {ok, pid()}.
 start_link(DocId) ->
-  gen_server:start_link({local, process_name(DocId)}, ?MODULE, DocId, []).
+  gen_server:start_link(process_name(DocId), ?MODULE, DocId, []).
 
 -spec event_dispatcher(document_id()) -> {global, atom()}.
 event_dispatcher(DocId) ->
