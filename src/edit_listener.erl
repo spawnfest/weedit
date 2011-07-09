@@ -79,9 +79,8 @@ code_change(_OldVsn, State, _Extra) ->
 %% @private
 -spec handle_request(atom(), [string()], term()) -> term().
 handle_request('GET', [], Req) ->
-  %%handle_request('GET', ["index.html"], Req);
   {ok,Document} = edit_document:create(),
-  Req:respond(302, [{"Location","/" ++ Document}], [], nil);
+  Req:raw_headers_respond(302, "Location: /doc/" ++ Document ++ [13,10], "Type this!");
 
 handle_request('GET', Path, Req) ->
   ?INFO("~p~n", [Path]),
