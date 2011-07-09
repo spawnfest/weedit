@@ -78,6 +78,11 @@ init(DocId) ->
         DPid;
       {error, {already_started, DPid}} -> DPid
     end,
+  try edit_document_handler:subscribe(DocId)
+  catch
+    throw:couldnt_subscribe ->
+      ?ERROR("Document ~s couldn't subscribe to the twitter stream.  No tweets for it.~n", [DocId])
+  end,
   ?INFO("Event dispatcher for ~s running in ~p~n", [DocId, DispPid]),
   {ok, #state{document = Doc}}.
 
