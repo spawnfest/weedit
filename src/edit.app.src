@@ -1,16 +1,14 @@
+%%-*- mode: erlang -*-
 {application, edit,
  [
-  {description, "WeEdit - Social Editing"},
-  {vsn, "0.1"},
+  {description,"WeEdit - Social Editing"},
+  {vsn, "0.1.0"},
   {registered, []},
   {applications, [
                   kernel,
-                  stdlib,
-                  crypto,
-                  inets,
-                  elog,
-                  socketio
+                  stdlib
                  ]},
-  {mod, {edit, []}},
+  {mod, { edit_app, []}},
   {env, []}
  ]}.
+%% vim: set filetype=erlang tabstop=2
