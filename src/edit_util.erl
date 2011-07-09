@@ -26,7 +26,7 @@ get_env(Field) ->
 
 %% @private
 -spec get_env_default(atom()) -> term().
-get_env_default(socketio_port_range) -> {8001, 8001};
+get_env_default(socketio_port_range) -> {12001, 12001};
 get_env_default(Field) ->
   throw({env_undefined, Field}).
 

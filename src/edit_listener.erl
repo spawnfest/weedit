@@ -79,9 +79,29 @@ code_change(_OldVsn, State, _Extra) ->
 %% @private
 -spec handle_request(atom(), [string()], term()) -> term().
 handle_request('GET', [], Req) ->
-  %%handle_request('GET', ["index.html"], Req);
   {ok,Document} = edit_document:create(),
-  Req:respond(302, [{"Location","/" ++ Document}], [], nil);
+  Req:raw_headers_respond(302, "Location: /doc/" ++ Document ++ [13,10], "Type this!");
+
+handle_request('GET', [ "doc", DocId] , Req) ->
+  Req:file(filename:join(["www","document.html"]));
+
+%% these are only here because matt and manuel are self hosting and can't properly path the files..
+%% remove when they self host
+
+handle_request('GET', [ "doc", "images" | Path] , Req) ->
+  File = filename:join(["www/images" | Path]),
+  ?INFO("~p~n", [File]),
+  Req:file(File);
+
+handle_request('GET', [ "doc", "js" | Path] , Req) ->
+  File = filename:join(["www/js" | Path]),
+  ?INFO("~p~n", [File]),
+  Req:file(File);
+
+handle_request('GET', [ "doc", "stylesheets" |  Path] , Req) ->
+  File = filename:join(["www/stylesheets" | Path]),
+  ?INFO("~p~n", [File]),
+  Req:file(File);
 
 handle_request('GET', Path, Req) ->
   ?INFO("~p~n", [Path]),

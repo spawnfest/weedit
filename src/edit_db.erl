@@ -1,6 +1,6 @@
 -module(edit_db).
 -behaviour(gen_server).
--define(SERVER, ?MODULE).
+
 -define(DOC_TABLE,edit_documents).
 -define(URL_TABLE,edit_urls).
 -define(USERS_TABLE,edit_users).
@@ -25,23 +25,24 @@
 %% ------------------------------------------------------------------
 
 start_link() ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 create_document() -> 
-  {ok,Name} = gen_server:call(?SERVER,create_document).
+  {ok,Name} = gen_server:call(?MODULE,create_document).
 
 document(Name) -> 
   {ok,todo}.
 
 %% TODO:SPEC
 add_version(Document,User,Patch) -> 
-  gen_server:call(?SERVER,{add_version,Document,User,Patch}).
+  gen_server:call(?MODULE,{add_version,Document,User,Patch}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
 init(Args) ->
+  init_schema(),
   {ok, Args}.
 
 handle_call(create_document, _From, State) ->

@@ -19,10 +19,11 @@
 	<body>		
 		<div class="container showgrid">
 			<div id="header" class="span-24">
+				
 			</div>
 			<div class="span-24">
 				<div class="span-4 logo">
-					<img id="logo" src="images/logo_1.png" alt="TypeSocial"/>
+					<img id="logo" src="images/logo.png" alt="TypeSocial"/>
 				</div>	
 				<div id="title" class="span-8 last">
 					<input id="document_title" type="text">
@@ -39,20 +40,84 @@
 					<div id="tweets"></div>
 					<div id="tbox"></div>
 				</div>			
+			</div>
 		</div>
-		</div>
-	</body>
-	<script type="text/javascript">
+		<div id="boxes">
 
-  		twttr.anywhere(function (T) {
+	
+		<!-- Login Window -->
 
-    	T("#tbox").tweetBox({
+		<div id="dialog" class="window">
+			<div id="login_logo">
+				<img src="images/login_logo.png">
+			</div>
+			<div id="login_info">
+				<h2>Welcome to TypeSocial!  Login with Twitter.</h2>	
+			</div>
+			<div id="twitter_login">
+				<!-- TODO: need to change this to do the twitter redirect --> 
+				<a href="#"class="close"><img id="twitter_login_logo" src="images/twitter_logo.png" alt="Login to Twitter"></a>
+			</div>
+		</div>	
+ 		<div id="mask"></div>
+	</div>
+</body>
+<script type="text/javascript">
+	twttr.anywhere(function (T) {
+
+		T("#tbox").tweetBox({
 			label: "Thoughts?",
-      		height: 50,
-      		width: 190,
-      		defaultContent: "<Type Socially!>"
-    	});
-  });
+	  		height: 50,
+	  		width: 190,
+	  		defaultContent: "<Type Socially!>"
+		});
+	});
 
+</script>
+<script>
+$(document).ready(function() {  
+ 	var	getridofthiswhenwehavesession = '';
+	
+	if (getridofthiswhenwehavesession == '') {
+        //Cancel the link behavior
+        //e.preventDefault();
+        //Get the A tag
+        //var id = $(this).attr('href');
+		var id = $('#dialog');
+     
+        //Get the screen height and width
+        var maskHeight = $(document).height();
+        var maskWidth = $(window).width();
+     
+        //Set height and width to mask to fill up the whole screen
+        $('#mask').css({'width':maskWidth,'height':maskHeight});
+         
+        //transition effect     
+        $('#mask').fadeIn(1000);    
+        $('#mask').fadeTo("slow",0.8);  
+     
+        //Get the window height and width
+        var winH = $(window).height();
+        var winW = $(window).width();
+              
+        //transition effect
+        $(id).fadeIn(2000); 
+     }
+    
+     
+    //if close button is clicked
+    $('.window .close').click(function (e) {
+        //Cancel the link behavior
+        e.preventDefault();
+        $('#mask, .window').hide();
+    });     
+     
+    //if mask is clicked
+    $('#mask').click(function () {
+        $(this).hide();
+        $('.window').hide();
+    });         
+     
+})
 </script>
 </html>
