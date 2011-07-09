@@ -80,13 +80,9 @@ unsubscribe(DocId) ->
 -spec init(#edit_document{}) -> {ok, state()}.
 init(Document) ->
   ?INFO("Init ~p for ~s~n", [?MODULE, Document#edit_document.id]),
-  Pattern =
-      binary:compile_pattern(
-        lists:map(fun list_to_binary/1, Document#edit_document.searches)),
-  State =
-      #state{document       = Document,
-             accept_pattern = Pattern},
-  {ok, State}.
+  Pattern = binary:compile_pattern(Document#edit_document.hash_tags),
+  {ok, #state{document       = Document,
+              accept_pattern = Pattern}}.
 
 %% @hidden
 -spec handle_event(itweet:tweet(), state()) -> {ok, state()}.

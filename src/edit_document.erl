@@ -14,6 +14,7 @@
 
 -export([create/0, start_link/1]).
 -export([event_dispatcher/1, process_name/1, stop/1]).
+-export([set_hash_tags/2]).
 -export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
@@ -57,6 +58,10 @@ process_name(DocId, local) ->
 add_tweet(DocId, Tweet) ->
   gen_server:cast(process_name(DocId), {add_tweet, Tweet}).
 
+-spec set_hash_tags(document_id(), [binary()]) -> ok.
+set_hash_tags(DocId, HashTags) ->
+  gen_server:cast(process_name(DocId), {set_hash_tags, HashTags}).
+
 -spec stop(document_id()) -> ok.
 stop(DocId) ->
   ?INFO("Manually stopping ~s~n", [DocId]),
@@ -83,7 +88,7 @@ init(DocId) ->
         DPid;
       {error, {already_started, DPid}} -> DPid
     end,
-  try edit_document_handler:subscribe(DocId)
+  try edit_document_handler:subscribe(Doc)
   catch
     throw:couldnt_subscribe ->
       ?ERROR("Document ~s couldn't subscribe to the twitter stream.  No tweets for it.~n", [DocId])
@@ -95,19 +100,34 @@ handle_call(_Request, _From, State) ->
   {noreply, ok, State}.
 
 handle_cast({add_tweet, Tweet}, State) ->
+  ?INFO("!!~n", []),
   #edit_document{id = DocId} = State#state.document,
   ok = edit_db:add_tweet(DocId, Tweet),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"tweet">>, edit_util:mochi_to_jsx(Tweet)}),
   {noreply, State};
+handle_cast({set_hash_tags, HashTags}, State) ->
+  #edit_document{id = DocId} = State#state.document,
+  NewDocument = State#state.document#edit_document{hash_tags = HashTags},
+  ok = edit_db:set_hash_tags(DocId, HashTags),
+  ok = edit_itweep:update_document(NewDocument),
+  gen_event:notify(event_dispatcher(DocId, local),
+                   {outbound_message, <<"set_hash_tags">>, HashTags}),
+  {noreply, State#state{document = NewDocument}};
 handle_cast(_Msg, State) ->
   {noreply, State}.
 
 handle_info(_Info, State) ->
   {noreply, State}.
 
-terminate(_Reason, _State) ->
-  ok.
+terminate(Reason, State) ->
+  #edit_document{id = DocId} = State#state.document,
+  case Reason of
+    normal ->
+      ?INFO("~s terminating~n", [DocId]);
+    Reason ->
+      ?WARN("~s terminating: ~p~n", [DocId, Reason])
+  end.
 
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.

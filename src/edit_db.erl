@@ -1,6 +1,8 @@
 -module(edit_db).
 -behaviour(gen_server).
 
+-include("edit_records.hrl").
+
 -define(DOC_TABLE,edit_documents).
 -define(URL_TABLE,edit_urls).
 -define(USERS_TABLE,edit_users).
@@ -12,7 +14,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 -export([start_link/0]).
--export([document/1, create_document/0, add_version/3, add_tweet/2]).
+-export([document/1, create_document/0, add_version/3, add_tweet/2, set_hash_tags/2]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -30,8 +32,11 @@ start_link() ->
 create_document() -> 
   {ok,Name} = gen_server:call(?MODULE,create_document).
 
-document(Name) -> 
-  {ok,todo}.
+document(DocId) -> 
+  {ok, #edit_document{id = DocId}}.
+
+set_hash_tags(DocId, HashTags) ->
+  ok.
 
 %% TODO:SPEC
 add_version(Document,User,Patch) -> 
