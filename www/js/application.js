@@ -224,46 +224,45 @@ var AddHashTerm = {
 
 var LoginBox = {
 	init: function() {
-	 	var	getridofthiswhenwehavesession = '';
+	
+        //Cancel the link behavior
+        //e.preventDefault();
+        //Get the A tag
+        //var id = $(this).attr('href');
+		var id = $('#dialog');
+     
+        //Get the screen height and width
+        var maskHeight = $(document).height();
+        var maskWidth = $(window).width();
+     
+        //Set height and width to mask to fill up the whole screen
+        $('#mask').css({'width':maskWidth,'height':maskHeight});
+         
+        //transition effect     
+        $('#mask').fadeIn(1000);    
+        $('#mask').fadeTo("slow",0.8);  
+     
+        //Get the window height and width
+        var winH = $(window).height();
+        var winW = $(window).width();
 		
-		if (getridofthiswhenwehavesession == '') {
-	        //Cancel the link behavior
-	        //e.preventDefault();
-	        //Get the A tag
-	        //var id = $(this).attr('href');
-			var id = $('#dialog');
-	     
-	        //Get the screen height and width
-	        var maskHeight = $(document).height();
-	        var maskWidth = $(window).width();
-	     
-	        //Set height and width to mask to fill up the whole screen
-	        $('#mask').css({'width':maskWidth,'height':maskHeight});
-	         
-	        //transition effect     
-	        $('#mask').fadeIn(1000);    
-	        $('#mask').fadeTo("slow",0.8);  
-	     
-	        //Get the window height and width
-	        var winH = $(window).height();
-	        var winW = $(window).width();
-			
-			//Set the popup window to center
-			$(id).css('top',  winH/2-$(id).height()/2);
-			$(id).css('left', winW/2-$(id).width()/2);
-	              
-	        //transition effect
-	        $(id).fadeIn(2000); 
-	     }
-	    
+		//Set the popup window to center
+		$(id).css('top',  winH/2-$(id).height()/2);
+		$(id).css('left', winW/2-$(id).width()/2);
+              
+        //transition effect
+        $(id).fadeIn(2000); 	    
 	     
 	    //if close button is clicked
-	    $('.window .close').click(function (e) {
+	    $('.window #follow-placeholder').click(function (e) {
 	        //Cancel the link behavior
 	        e.preventDefault();
 	        $('#mask, .window').hide();
-	    });     
-	     
+	    });	    	   
+	   	
+	    twttr.anywhere(function (T) {
+			T("#follow-placeholder").followButton('TypeSocial');
+		});
 	    //if mask is clicked
 	    //$('#mask').click(function () {
 	    //    $(this).hide();
@@ -338,11 +337,11 @@ var LoadTweetBox = {
 $(document).ready(function(){
 
   TypeSocial.init();
+  LoginBox.init();
   RefreshClientList.load();
   GetHashTerms.init();
   RefreshTweetList.load();  
   LoadTweetBox.init();
-  LoginBox.init();
   AddHashTerm.init();
   
   
