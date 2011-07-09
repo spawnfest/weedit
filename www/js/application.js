@@ -47,6 +47,9 @@ var TSocket = {
         case 'edit_title':
           TypeSocial.setTitle(data.diff)
           break;
+        case 'edit_body':
+          TypeSocial.setBody(data.diff)
+          break;
         default:
           console.log("I don't know this action" + data);
       }
@@ -64,6 +67,10 @@ var TSocket = {
     console.log(diff); 
     this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":diff});
   },
+  doSetDoc: function(diff) { 
+    console.log(diff); 
+    this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":diff});
+  },
   doSetTwitter: function(term) { 
     console.log(term); 
     this.object.send({"doc_id":this.doc_id,"action":"set_twitter","hashtag":term});
@@ -72,6 +79,7 @@ var TSocket = {
 
 var TypeSocial = {
   editor: null,
+  editor_last_rev:"",
   title: null,
   title_last_rev:"",
   timer:null,
@@ -100,23 +108,35 @@ var TypeSocial = {
       console.log("Here is the data" + event);
     });
   },
-  checkTitle: function () {
+  checkDiffChanges: function () {
     console.log("Checking title...");
 
     if (this.title_last_rev != this.title.val()) {
-       console.log(this);
        diff = this.dmp.getDiff(this.title_last_rev,this.title.val());
        this.title_last_rev = this.title.val();
        this.socket.doSetTitle(diff);
     }
+
+    console.log("Checking doc...");
+
+    if (this.editor_last_rev != this.editor.val()) {
+       diff = this.dmp.getDiff(this.editor_last_rev,this.editor.val());
+       this.editor_last_rev = this.editor.val();
+       this.socket.doSetDoc(diff);
+    }
+
   },
   setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
     this.title_last_rev = this.title.val();
   },
+  setBody: function(diff) {
+    this.editor.val(this.dmp.applyPatch(this.editor.val(),diff));       
+    this.editor_last_rev = this.editor.val();
+  },
   startInterval: function(interval){
     var instance = this;
-    this.timer = setInterval(function() {instance.checkTitle();},interval);
+    this.timer = setInterval(function() {instance.checkDiffChanges();},interval);
   },
   stopInterval: function() {
     clearInterval(this.timer);
@@ -127,7 +147,10 @@ var TypeSocial = {
     if (ext_config) {this.config = config}
     this.editor = $('#editor').ckeditor(this.onEditorReady,this.config); 
 
+    // Setting the title object and the value for the last revision
+    // in case it comes from the server
     this.title = $('#document_title');
+    this.title_last_rev = this.title.val();
 
     // Set up Diff Match Patch
     this.dmp.init();
