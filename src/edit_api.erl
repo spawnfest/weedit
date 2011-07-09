@@ -5,7 +5,8 @@
 -include("socketio.hrl").
 
 %% required so that we can subscribe to events for this document
-handle_command(ClientPid, <<"hello">>, DocId, Data) -> 
+-spec handle_command(pid(), binary(), string(), [proplists:property()]) -> noreply.
+handle_command(ClientPid, <<"hello">>, DocId, Data) ->
   gen_event:add_handler(edit_document:event_dispatcher(DocId), edit_client_handler, [ClientPid]),
   noreply;
 

@@ -24,8 +24,8 @@ handle_event({message, ClientPid, SMsg}, State) ->
   {Command, DocumentId, Data} =
       case SMsg of
         #msg{content = MsgProps, json = true} ->
-          {edit_util:safe_term_to_binary(proplists:get_value(<<"action">>, MsgProps, <<>>)),
-           edit_util:safe_term_to_binary(proplists:get_value(<<"doc_id">>, MsgProps, <<>>)),
+          {proplists:get_value(<<"action">>, MsgProps, <<>>),
+           binary_to_list(proplists:get_value(<<"doc_id">>, MsgProps, <<>>)),
            MsgProps};
         #msg{content = Text, json = false} ->
           {text, unknown, Text}
