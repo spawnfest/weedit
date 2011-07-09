@@ -50,7 +50,8 @@ var TSocket = {
   },
   setTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"action":"title","diff":diff});
+    doc_id = location.pathname.split("/")[2]
+    this.object.send({"doc_id":doc_id,"action":"title","diff":diff});
   }
 }
 

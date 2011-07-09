@@ -20,14 +20,16 @@ start(Pid) ->
 init([]) -> {ok, #state{}}.
 
 handle_event({message, ClientPid, SMsg}, State) ->
-  {Command, Data} =
+  {Command, DocumentId, Data} =
       case SMsg of
         #msg{content = MsgProps, json = true} ->
-          {edit_util:safe_term_to_binary(proplists:get_value(<<"action">>, MsgProps, <<>>)),MsgProps};
+          {edit_util:safe_term_to_binary(proplists:get_value(<<"action">>, MsgProps, <<>>)),
+           edit_util:safe_term_to_binary(proplists:get_value(<<"doc_id">>, MsgProps, <<>>)),
+           MsgProps};
         #msg{content = Text, json = false} ->
-          {text, Text}
+          {text, unknown, Text}
       end,
-      case edit_api:handle_command(Command, Data) of
+      case edit_api:handle_command(Command, DocumentId, Data) of
           {ok, Response} -> 
             socketio_client:send(ClientPid,
              #msg{json = true,
@@ -36,7 +38,8 @@ handle_event({message, ClientPid, SMsg}, State) ->
           {error, Why } -> 
              #msg{json = true,
                   content = [{<<"error">>, true},
-                         {<<"result">>, iolist_to_binary(io_lib:format("~p", [Why]))}]}
+                         {<<"result">>, iolist_to_binary(io_lib:format("~p", [Why]))}]};
+          noreply -> noreply
       end,
   {ok, State}.
 
