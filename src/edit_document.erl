@@ -17,6 +17,7 @@
 -export([set_hash_tags/2]).
 -export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
+-export([title/1,body/1]).
 
 -include("elog.hrl").
 -include("socketio.hrl").
@@ -73,6 +74,12 @@ stop(DocId) ->
       ?WARN("Couldn't stop ~s: ~p~n", [DocId, Reason]),
       ok
   end.
+
+title(DocId) -> 
+  "TODO:BRUJO".
+
+body(DocId) -> 
+  "TODO:BRUJO".
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
