@@ -14,8 +14,8 @@ var TypeSocial = {
   config: {
     toolbar:'Basic',
     resize_enabled:false,
-    height:400,
-    width:400
+    height:450,
+    width:540
   },
   login: function(){},
   onEditorReady: function(){console.log("It's TypeSocialed!");},
