@@ -2,7 +2,7 @@
 %% @author C B DePue <chad@inakanetworks.com>
 %% @author Fernando Benavides <fernando.benavides@inakanetworks.com>
 %% @copyright (C) 2011 InakaLabs SRL
-%% @doc RPC.io main supervisor
+%% @doc WeEdit main supervisor
 %% @end
 %%-------------------------------------------------------------------
 -module(edit_doc_sup).
