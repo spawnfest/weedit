@@ -442,16 +442,15 @@ var LoadSearchTerm = {
 
 var LoadTweetBox = {
 	init: function() {
-    $(".tweet-this a").tweetIt();
-		//twttr.anywhere("1",function (T) {
+		twttr.anywhere("1",function (T) {
 		
-		//	T("#tbox").tweetBox({
-		//		label: "Thoughts?",
-		//  		height: 50,
-		//  		width: 190,
-		//  		defaultContent: "<Type Socially!>"
-		//	});
-		//});
+			T("#tbox").tweetBox({
+				label: "Thoughts?",
+		  		height: 50,
+		  		width: 190,
+		  		defaultContent: "<Type Socially!>"
+			});
+		});
 	}
 }
 
