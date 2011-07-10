@@ -76,7 +76,7 @@ var TSocket = {
     console.log(diff); 
     this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
-  doSetTwitter: function(terms) { 
+  doSetHashTags: function(terms) { 
     console.log("sending terms ");
     console.log(terms);
     this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
@@ -234,7 +234,7 @@ var AddHashTerm = {
 		
     terms.push(term);
 
-		TSocket.doSetTwitter(terms);
+		TSocket.doSetHashTags(terms);
 		
 		
 	},
@@ -315,7 +315,7 @@ var LoadSearchTerm = {
 	    //Set height and width to mask to fill up the whole screen
 	    $('#mask').css({'width':maskWidth,'height':maskHeight});
 	     
-	    //transition effect     
+	      //transition effect     
 	    $('#mask').fadeIn(1000);    
 	    $('#mask').fadeTo("slow",0.8);  
 	 
@@ -334,12 +334,15 @@ var LoadSearchTerm = {
 	    $('.window .addnewterm').click(function (e) {
 	        //Cancel the link behavior
 	        e.preventDefault();	       	   
-	        AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
-	        
-	        $('#mask, .window').hide();
-	        $('#searchterminput').val('');
+          LoadSearchTerm.SubmitTerm(id);
 	    });
-	
+
+
+      $('#searchterminput').keyup(function(e) {
+        if (e.keyCode == 13) {
+          LoadSearchTerm.SubmitTerm(id);
+        }
+      });
 	     
 	    //if mask is clicked
 	    $('#mask').click(function () {
@@ -347,7 +350,18 @@ var LoadSearchTerm = {
 	        $('.window').hide();
 	        $('#searchterminput').val('');
 	    });
-	}
+	},
+  SubmitTerm: function(id)
+  {
+    if ($('#searchterminput').val() != ""){
+        AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
+        $('#mask, .window').hide();
+        $('#searchterminput').val('');        
+    }else{
+      $(id).effect( 'shake', {}, 100);
+    }
+
+  }
 }
 
 var LoadTweetBox = {
