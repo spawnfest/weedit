@@ -62,7 +62,7 @@ var TSocket = {
   },
   doLogin: function(screen_name, image_url) { 
     console.log("id and username = " + [screen_name,image_url]); 
-    this.object.send({'action':'login',"twitter_screen_name":screen_name, "twitter_image_url":image_url});
+    this.object.send({'action':'login',"doc_id":this.doc_id,"twitter_screen_name":screen_name, "twitter_image_url":image_url});
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
