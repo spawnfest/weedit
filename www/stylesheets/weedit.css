@@ -132,8 +132,12 @@ hr {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	font-size: 32pt;
+  font-weight: bold;
 	vertical-align: top;
-	width: 940px;
+	width: 700px;
+  padding-left:120px;
+  font-family: Courier, Courier New;
+  color: #fff;
 }
 
 /* User side bar styling */

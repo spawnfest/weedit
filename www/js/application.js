@@ -59,7 +59,7 @@ var TSocket = {
           AddTweet.load(data.tweet);
           break;
         case 'set_users':
-          console.log("receive user list");
+          console.log(data.users);
           RefreshClientList.load(data.users);
           break;
         default:
@@ -189,9 +189,27 @@ var TypeSocial = {
 
 var RefreshClientList = {
 	load: function(users) {		
-		jQuery.each(users, function() {
-			if ($("#" + this).length == 0){			
-				$('#userlist').append('<div class="twitteritem" id="' + this + '"><img id="twitter_avatar" src="images/twitter_logo.png"><span id="handle">' + this + '</span></div>')
+		$.each(users, function() {
+      var username  = this.username;
+
+
+			if ($("#" + username).length == 0){			
+        var imageurl  = '';
+
+        $.getJSON("http://api.twitter.com/1/users/show.json?screen_name=" + username,
+          function(data) {
+            $.each(data, function(key, val) {
+              if (key == 'profile_image_url') {
+                imageurl  = val;
+              }
+            });
+          });
+
+        if(imageurl == '') {
+          imageurl  = "images/twitter_logo.png";
+        }
+
+  			$('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
 			}
 		});
 	}
@@ -410,7 +428,7 @@ $(document).ready(function(){
             console.log(error);
         }
 	    } else {  
-	    	//LoginBox.init();
+	    	LoginBox.init();
 	    }  
 	});
 
