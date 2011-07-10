@@ -239,7 +239,7 @@ var AddHashTerm = {
 			$('#addterm').remove();
 		}		
 	},
-	loadlist: function(jsonlist)) {		
+	loadlist: function(jsonlist) {		
 		console.log(jsonlist);
 		//AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
 		//sanitizedterm		= "#" + term;
