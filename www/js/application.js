@@ -265,13 +265,25 @@ var AddHashTerm = {
 	},
 	loadlist: function(jsonlist) {		
     console.log(jsonlist);
+    var new_search  = '';
+    var search_arr  = new Array();
+
     $('#searchterms').children().remove("div");
     $.each(jsonlist, function(i,val){
   	  sanitizedterm		= "#" + val;
+
 			$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
+
+      if (new_search == '') {
+        new_search  = "New search term added.  Now searching on " + sanitizedterm;
+      } else {
+        new_search  += ', ' + sanitizedterm;
+      }
     });
 	
-	
+	  search_arr.push(new_search);
+
+    AddTweet.load(search_arr);
 	}
 }
 

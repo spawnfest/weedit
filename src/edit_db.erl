@@ -18,6 +18,9 @@
 -export([create_document/0, ensure_document/1, document/1]).
 -export([update/4]).
 
+-record(state, {}).
+-opaque state() :: #state{}.
+
 %%-------------------------------------------------------------------
 %% PUBLIC API
 %%-------------------------------------------------------------------
@@ -25,53 +28,69 @@
 start_link() ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
+-spec create_document() -> {ok, document_id()}.
 create_document() ->
-  {ok, random_document_id()}.
+  gen_server:call(?MODULE, create_document).
 
+-spec ensure_document(document_id()) -> ok.
 ensure_document(DocId) ->
-  ok.
+  gen_server:cast(?MODULE, {ensure_document, DocId}).
 
-document(DocId) -> 
-  {ok, #edit_document{id = DocId}}.
+-spec document(document_id()) -> #edit_document{}.
+document(DocId) ->
+  case gen_server:call(?MODULE, {document, DocId}) of
+    {ok, Document} -> Document;
+    {error, Reason} -> throw(Reason)
+  end.
 
-set_hash_tags(DocId, HashTags) ->
-  ok.
-
-%% TODO:SPEC
+-spec update(#edit_document{}, binary(), atom(), term()) -> ok.
 update(Document, User, Type, Patch) -> 
-  ?INFO("db: ~p to ~s:~n\t~p ~n", [Type, Document#edit_document.id, Patch]),
-  ok.
+  ?INFO("db: ~p to ~s~n", [Type, Document#edit_document.id]),
+  gen_server:cast(?MODULE, {update, Document, User, Type, Patch}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
-init(Args) ->
+%% @private
+-spec init(document_id()) -> {ok, state()}.
+init([]) ->
   _ = random:seed(erlang:now()),
-  {ok, Args}.
+  {ok, #state{}}.
 
+%% @private
+-spec handle_call(term(), reference(), state()) -> {reply, term(), state()} | {stop, normal, ok, state()}.
 handle_call(create_document, _From, State) ->
   DocId = random_document_id(),
-  {reply, ok, NewState} =
-      handle_call({create_document, DocId}, _From, State),
-  {reply, {ok, DocId}, NewState};
-
-handle_call({create_document, DocId}, _From, State) ->
   {reply, {ok, DocId}, State};
+handle_call({document, DocId}, _From, State) ->
+  {reply, {ok, #edit_document{id = DocId}}, State}.
 
-handle_call(_Request, _From, State) ->
-  {reply, ok, State}.
-
-handle_cast(_Msg, State) ->
+%% @private
+-spec handle_cast(term(), state()) -> {noreply, state()}.
+handle_cast({ensure_document, DocId}, State) ->
+  {noreply, State};
+handle_cast({update, Document, User, Type, Patch}, State) ->
   {noreply, State}.
 
-handle_info(_Info, State) ->
-  {noreply, State}.
+%% @private
+-spec handle_info(term(), state()) -> {noreply, state()} | {stop, term(), state()}.
+handle_info(_Info, State) -> {noreply, State}.
 
-terminate(_Reason, _State) ->
+%% @private
+-spec code_change(any(), state(), any()) -> {ok, state()}.
+code_change(_OldVsn, State, _Extra) -> {ok, State}.
+
+%% @private
+-spec terminate(any(), state()) -> any().
+terminate(Reason, _State) ->
+  case Reason of
+    normal ->
+      ?INFO("terminating~n", []);
+    Reason ->
+      ?WARN("terminating: ~p~n", [Reason])
+  end,
   ok.
 
-code_change(_OldVsn, State, _Extra) ->
-  {ok, State}.
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
