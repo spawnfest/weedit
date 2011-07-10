@@ -20,6 +20,7 @@
 -spec handle_command(pid(), binary(), string(), [proplists:property()]) -> noreply.
 handle_command(ClientPid, <<"hello">>, DocId, _Data) -> %% required so that we can subscribe to events for this document
   ?INFO("got hello from ~p ~n",[DocId]),
+  edit_document:ensure_started(DocId),
   gen_event:add_sup_handler(edit_document:event_dispatcher(DocId), edit_client_handler, [ClientPid]),
   #edit_document{users = Users, hash_tags = HashTags} = edit_document:document(DocId),
   ?INFO("sending users to the new guy: ~p ~n",[Users]),
