@@ -305,7 +305,7 @@ var AddHashTerm = {
     $.each(jsonlist, function(i,val){
   	  sanitizedterm		= "#" + val;
 
-			$('<div id="'+ sanitizedterm + '" class="searchterm">' + sanitizedterm + '<div id="'+sanitizedterm+' class="remove" onclick="AddHashTerm.delete('+sanitizedterm+');"style="cursor: pointer;"></div>"</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
+			$('<div id="'+ sanitizedterm + '" class="searchterm">' + sanitizedterm + '<div id="'+sanitizedterm+' class="remove" onclick="AddHashTerm.delete('+sanitizedterm+');"style="cursor: pointer;"><img id="delete" src="images/delete_icon.png"></div>"</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
 
       if (new_search == '') {
         new_search  = "New search term added.  Now searching on " + sanitizedterm;
