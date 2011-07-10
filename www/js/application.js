@@ -75,7 +75,7 @@ var TSocket = {
     this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
   doSetTwitter: function(terms) { 
-    console.log(term); 
+    console.log(terms); 
     this.object.send({"doc_id":this.doc_id,"action":"set_twitter","hashtag":terms});
   }
 }
