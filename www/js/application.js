@@ -229,7 +229,7 @@ var AddHashTerm = {
 	add: function(term) {
 		if($("#searchterms > div").size() < 10) {
 			sanitizedterm	= "#" + term;
-			if ($(santizedterm).length == 0) {
+			if ($(sanitizedterm).length == 0) {
 				$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
 				TSocket.doSetTwitter(sanitizedterm);
 			}
@@ -243,7 +243,7 @@ var AddHashTerm = {
 		console.log(jsonlist);
 		//AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
 		//sanitizedterm		= "#" + term;
-		//if ($(santizedterm).length == 0) {
+		//if ($(sanitizedterm).length == 0) {
 		//	$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
 		//}
 		
