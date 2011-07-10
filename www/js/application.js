@@ -266,10 +266,9 @@ var AddTweet = {
     }
 						
 		if($("#tweets > div").size() == 5) {
-			$('#tweets').find('div').first().fadeOut(500).remove();
-			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="'+ img + '">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="'+ img + '">' + text + '</div></div><hr id="'+this+'">').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 		} else {
-			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="' + img + '">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="' + img + '">' + text + '</div></div><hr id="'+this+'">').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 		}
 	}
 }
