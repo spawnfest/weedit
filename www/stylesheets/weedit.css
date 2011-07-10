@@ -136,6 +136,11 @@ hr {
 	width: 740px;
 }
 
+.span-14  #editor
+{
+  width: 540px;
+}
+
 #home_document_title {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
