@@ -52,7 +52,6 @@ var TSocket = {
           TypeSocial.setBody(data.diff)
           break;
         case 'set_hash_tags':
-          console.log('set hash tags');
           AddHashTerm.loadlist(data.tags);
           break;
         default:
@@ -239,12 +238,16 @@ var AddHashTerm = {
 		
 	},
 	loadlist: function(jsonlist) {		
-    console.log('inroundtrip');
-		//AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
-		//sanitizedterm		= "#" + term;
-		//if ($(sanitizedterm).length == 0) {
-		//	$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
-		//}
+    console.log(jsonlist);
+    $('#searchterms').remove("div");
+    $.each(jsonlist, function(){
+  	  sanitizedterm		= "#" + term;
+
+		  if ($(sanitizedterm).length == 0) {
+			  $('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
+		  }  
+    });
+	
 	
 	}
 }
