@@ -49,6 +49,7 @@ handle_event({message, ClientPid, SMsg}, State) ->
         #msg{content = Text, json = false} ->
           {text, unknown, Text}
       end,
+  ?INFO("~p~n", [Data]),
   noreply = edit_api:handle_command(ClientPid, Command, DocumentId, Data),
   {ok, State};
 handle_event({outbound_message, Action, MessagePropList, FromClientPid}, State) ->
