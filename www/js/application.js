@@ -159,7 +159,7 @@ var TypeSocial = {
   setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
     this.title_last_rev = this.title.val();
-  TSocket},
+  },
   setBody: function(diff) {
     if (this.editor.tinymce()) { 
       this.editor.tinymce().setContent(this.dmp.applyPatch(this.editor.tinymce().getContent(),diff));       
