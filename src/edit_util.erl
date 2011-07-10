@@ -72,11 +72,8 @@ safe_term_to_binary(A) when is_atom(A) ->
 safe_term_to_binary(A) when is_binary(A) -> A.
 
 -spec mochi_to_jsx(itweet_mochijson2:json_object()) -> jsx:eep0018().
-mochi_to_jsx({List}) when is_list(List) ->
-  lists:map(fun mochi_to_jsx_prop/1, List);
-mochi_to_jsx(Other) -> Other.
-
-mochi_to_jsx_prop({Key, Value}) -> {Key, mochi_to_jsx(Value)}.
+mochi_to_jsx(Object) ->
+  jsx:json_to_term(iolist_to_binary(itweet_mochijson2:encode(Object))).
 
 -spec to_jsx(term()) -> jsx:eep0018().
 to_jsx(#edit_user{id = Id, username = Name}) ->
