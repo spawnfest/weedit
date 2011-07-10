@@ -99,8 +99,9 @@ handle_request('GET', ["d", DocId] , Req) ->
 
 %% read only documents - rendered with title, tags and body to the latest version
 handle_request('GET', ["r", DocId] , Req) ->
-  ?INFO("RENDERING READ ONLY DOC ~p ~n", [DocId]),
-  Document = edit_document:document(DocId),
+  RDoc = DocId ++ "_ro",
+  ?INFO("RENDERING READ ONLY DOC ~p ~n", [RDoc]),
+  Document = edit_document:document(Rdoc),
   Mustaches = dict:from_list([{title,     binary_to_list(Document#edit_document.title)},
                               {body,      binary_to_list(Document#edit_document.body)},
                               {hash_tags, Document#edit_document.hash_tags}]),
