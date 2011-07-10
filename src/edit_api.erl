@@ -39,4 +39,3 @@ handle_command(ClientPid, <<"edit_body">>, DocId, Data) ->
   ?INFO("got diff of document: ~p ~n",[DocDiff]),
   edit_document:edit_body(DocId,ClientPid,DocDiff),
   noreply.
-

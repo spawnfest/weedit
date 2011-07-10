@@ -4,8 +4,8 @@
 -record(edit_user, {id        :: pos_integer(),
                     username  :: string()}).
 -record(edit_document, {id              :: document_id(),
-                        title = ""      :: string(),
-                        body = ""       :: string(),
+                        title = <<"">>  :: binary(),
+                        body = <<"">>   :: binary(),
                         owner           :: #edit_user{},
                         users = []      :: [#edit_user{}],
                         hash_tags = []  :: [binary()]}).

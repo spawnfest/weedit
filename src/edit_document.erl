@@ -94,7 +94,6 @@ document(DocId) ->
 
 -spec edit_title(document_id(), term(), diff()) -> ok.
 edit_title(DocId, Token, Diff) ->
-  ?INFO("called edit_title diff: ~p, docid: ~p ~n",[Diff,DocId]),
   gen_server:cast(process_name(DocId), {edit_title, Diff, Token}).
 
 -spec edit_body(document_id(), term(), diff()) -> ok.
@@ -128,7 +127,7 @@ init(DocId) ->
 
   %% init js
   JS = init_js(),
-  
+
   ?INFO("Event dispatcher for ~s running in ~p~n", [DocId, DispPid]),
   {ok, #state{document = Doc,
               js_context = JS}}.
@@ -168,20 +167,20 @@ handle_cast({set_hash_tags, HashTags, Token}, State) ->
 %% save versions of title
 handle_cast({edit_title, Diff, Token}, State) ->
   #edit_document{id = DocId, title = Title} = State#state.document,
-  NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Title)},
+  NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Title, State#state.js_context)},
   ok = edit_db:add_version(NewDocument, Token, {edit_title, Diff}),
-  ?INFO("in edit_title dif: ~p, title: ~p, docid: ~p ~n",[Diff,Title,DocId]),
+  ?INFO("in edit_title diff: ~p, title: ~p, docid: ~p ~n",[Diff,Title,DocId]),
   gen_event:notify(event_dispatcher(DocId, local),
-                   {outbound_message, <<"edit_title">>, [{<<"diff">>,Diff}], Token}),
+                   {outbound_message, <<"edit_title">>, [{<<"diff">>, Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
 
 %% save versions of body
 handle_cast({edit_body, Diff, Token}, State) ->
   #edit_document{id = DocId, body = Body} = State#state.document,
-  NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body)},
+  NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body, State#state.js_context)},
   ok = edit_db:add_version(NewDocument, Token, {edit_body, Diff}),
   gen_event:notify(event_dispatcher(DocId, local),
-                   {outbound_message, <<"edit_body">>, [{<<"diff">>,Diff}], Token}),
+                   {outbound_message, <<"edit_body">>, [{<<"diff">>, Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
 
 %% save login of a user
@@ -226,11 +225,27 @@ terminate(Reason, State) ->
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
-init_js() -> 
+init_js() ->
   {ok, JS} = js_driver:new(),
-  js:define(JS,<<"window={}">>), 
+  js:define(JS, <<"window={};">>),
   {ok, F} = file:read_file("www/js/diff/diff_match_patch.js"),
   js:define(JS,F),
+  js:define(JS, <<"window.dmp = new window.diff_match_patch();\n"
+                  "window.dmp.Match_Threshold = 0.25;\n">>),
+  js:define(JS, <<"function apply_diff(text1,diff_object) {\n"
+                  "\tvar patches = window.dmp.patch_make(text1, diff_object);\n",
+                  "\tvar results = window.dmp.patch_apply(patches, text1);\n",
+                  "\treturn results[0]"
+                  "};\n">>),
   JS.
 
-apply_diff(Diff, Something) -> Something.
+apply_diff(Diff, Something, JS) ->
+  ?INFO("apply_diff(~p, ~p, ~p)~n", [Diff, Something, JS]),
+  case js:call(JS, <<"apply_diff">>, [Something, Diff]) of
+    {ok, Result} ->
+      ?INFO("~p~n", [Result]),
+      Result;
+    {error, Reason} ->
+      ?THROW("Couldn't apply diff(~p, ~p, ~p): ~p~n", [Diff, Something, JS, Reason]),
+      Something
+  end.

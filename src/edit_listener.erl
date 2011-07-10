@@ -88,8 +88,8 @@ handle_request('GET', [], Req) ->
 handle_request('GET', [ "doc", DocId] , Req) ->
   ?INFO("RENDERING DOC ~p ~n",[DocId]),
   Document = edit_document:document(DocId),
-  Mustaches = dict:from_list([{title, Document#edit_document.title},
-                              {body, Document#edit_document.body},
+  Mustaches = dict:from_list([{title,     binary_to_list(Document#edit_document.title)},
+                              {body,      binary_to_list(Document#edit_document.body)},
                               {hash_tags, Document#edit_document.hash_tags}]),
   {ok, FileData} = file:read_file(filename:join(["www","document.html"])),
   Req:ok(mustache:render(FileData,Mustaches));
