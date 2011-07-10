@@ -79,7 +79,13 @@ code_change(_OldVsn, State, _Extra) ->
 
 %% @private
 -spec handle_request(atom(), [string()], term()) -> term().
+
+% index
 handle_request('GET', [], Req) ->
+  {ok,Document} = Req:file(filename:join(["www","index.html"]));
+
+% new doc auto
+handle_request('GET', ["new"], Req) ->
   {ok,Document} = edit_document:create(),
   Req:raw_headers_respond(302, "Location: /doc/" ++ Document ++ [13,10], "Type this!");
 
@@ -99,22 +105,18 @@ handle_request('GET', [ "doc", DocId] , Req) ->
 
 handle_request('GET', [ "doc", "images" | Path] , Req) ->
   File = filename:join(["www/images" | Path]),
-  ?INFO("~p~n", [File]),
   Req:file(File);
 
 handle_request('GET', [ "doc", "js" | Path] , Req) ->
   File = filename:join(["www/js" | Path]),
-  ?INFO("~p~n", [File]),
   Req:file(File);
 
 handle_request('GET', [ "doc", "stylesheets" |  Path] , Req) ->
   File = filename:join(["www/stylesheets" | Path]),
-  ?INFO("~p~n", [File]),
   Req:file(File);
 
 %% Handle everything else
 
 handle_request('GET', Path, Req) ->
-  ?INFO("~p~n", [Path]),
   Req:file(filename:join(["www"| Path])).
 
