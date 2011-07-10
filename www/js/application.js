@@ -80,12 +80,14 @@ var TSocket = {
   },
   doSetDoc: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
+    if (this.object)
+      this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
   doSetHashTags: function(terms) { 
     console.log("sending terms ");
     console.log(terms);
-    this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
+    if (this.object)
+      this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
   }
 }
 
@@ -221,6 +223,8 @@ var AddHashTerm = {
 		var terms=[];
 	},
 	add: function(term) {
+
+    term = "#" + term;
 			
 		if($("#searchterms").size() == 10) {
 			$('#addterm').remove();
@@ -240,12 +244,10 @@ var AddHashTerm = {
 	},
 	loadlist: function(jsonlist) {		
     console.log(jsonlist);
-    $('#searchterms').remove("div");
+    $('#searchterms').children().remove("div");
     $.each(jsonlist, function(i,val){
   	  sanitizedterm		= "#" + val;
-		  if ($(sanitizedterm).length == 0) {
-			  $('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
-		  }  
+			$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
     });
 	
 	
@@ -356,6 +358,8 @@ var LoadSearchTerm = {
 	},
   SubmitTerm: function(id)
   {
+    console.log("IM HERE");
+    console.log($('#searchterminput').val());
     if ($('#searchterminput').val() != ""){
         AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
         $('#mask, .window').hide();
