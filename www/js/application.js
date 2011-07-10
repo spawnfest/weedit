@@ -186,10 +186,9 @@ var TypeSocial = {
 
     //this.editor = $('#editor').ckeditor(this.onEditorReady,this.config); 
     $('#editor').tinymce({theme : "advanced", theme_advanced_buttons2 : "",
-              theme_advanced_buttons3 : "",
               theme_advanced_toolbar_location : "top",
-              theme_advanced_toolbar_align : "left",
-              theme_advanced_statusbar_location : "",height : "480"});
+              theme_advanced_blockformats:"",
+              theme_advanced_toolbar_align : "left",height : "480"});
 
     this.editor = $('#editor');
 
@@ -206,6 +205,11 @@ var TypeSocial = {
 
     // Set up Diff Match Patch
     this.dmp.init();
+
+    this.dmp.Match_Threshold = 0.2;
+
+    this.dmp.Patch_DeleteThreshold = 0.2;
+
     // Set up Socket.io
     if (location.hostname != '') {
       this.socket.startInterval();
