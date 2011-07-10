@@ -188,10 +188,12 @@ hr {
 }
 
 #handle {
-	vertical-align:middle;
-	font-size:13pt;
-	font-spacing:-1px;
+vertical-align: middle;
+font-size: 10pt;
+margin-left: 5px;
+font-family: courier, courier new;
 }
+
 
 #searchbox {
 	background-color: white;
