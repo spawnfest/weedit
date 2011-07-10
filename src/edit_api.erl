@@ -31,12 +31,23 @@ handle_command(ClientPid, <<"hello">>, DocId, _Data) -> %% required so that we c
                                        {<<"users">>, lists:map(fun edit_util:to_jsx/1, Users)}
                                       ]}),
   ?INFO("sending hash tags to the new guy: ~p ~n",[Users]),
-    socketio_client:send(ClientPid,
-                         #msg{json = true,
-                              content = [ {<<"error">>, false},
-                                         {<<"action">>,<<"set_hash_tags">>},
-                                         {<<"tags">>,HashTags}
-                                        ]}),
+  socketio_client:send(ClientPid,
+                       #msg{json = true,
+                            content = [{<<"error">>, false},
+                                       {<<"action">>,<<"set_hash_tags">>},
+                                       {<<"tags">>,HashTags}
+                                      ]}),
+  lists:foreach(
+    fun({_TS, tweet, Tweet}) ->
+            socketio_client:send(ClientPid,
+                                 #msg{json = true,
+                                      content = [{<<"error">>,  false},
+                                                 {<<"action">>, <<"tweet">>},
+                                                 {<<"tweet">>,  edit_util:mochi_to_jsx(Tweet)}
+                                                ]});
+       (_) ->
+            ok
+    end, edit_db:history(DocId)),
   noreply;
 handle_command(_ClientPid, <<"login">>, DocId, Data) ->
   ?INFO("wow in login: ~p ~p ~n",[DocId,Data]),

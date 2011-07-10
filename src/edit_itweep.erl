@@ -69,7 +69,12 @@ init([]) ->
 %% @hidden
 -spec handle_status(Status::itweet:tweet(), State::term()) -> {ok, state()}.
 handle_status(Tweet, State) ->
-  ok = gen_event:notify(?DISPATCHER, Tweet),
+  try gen_event:notify(?DISPATCHER, Tweet)
+  catch
+    _:_ ->
+      gen_event:start_link({local, ?DISPATCHER}),
+      gen_event:notify(?DISPATCHER, Tweet)
+  end,
   {ok, State}.
 
 %% @hidden
