@@ -272,4 +272,10 @@ font-family: courier, courier new;
 	overflow: hidden;
 }
 
+a.docfooterlink
+{
+  text-decoration:none; 
+  font-size:12px; 
+  font-family:courier new;
+}
 
