@@ -59,7 +59,7 @@ var TSocket = {
           AddTweet.load(data.tweet);
           break;
         case 'set_users':
-          console.log("receive user list");
+          console.log("receive user list " + data.users);
           RefreshClientList.load(data.users);
           break;
         default:
