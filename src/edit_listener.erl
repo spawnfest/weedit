@@ -84,10 +84,10 @@ handle_request('GET', [], Req) ->
 
 handle_request('GET', ["new"], Req) ->
   {ok, DocId} = edit_db:create_document(),
-  Req:raw_headers_respond(302, "Location: /doc/" ++ DocId ++ [13,10], "Type this!");
+  Req:raw_headers_respond(302, "Location: /d/" ++ DocId ++ [13,10], "Type this!");
 
 %% all documents - rendered with title, tags and body to the latest version
-handle_request('GET', ["doc", DocId] , Req) ->
+handle_request('GET', ["d", DocId] , Req) ->
   ?INFO("RENDERING DOC ~p ~n", [DocId]),
   {ok, _Pid} = edit_document:ensure_started(DocId),
   Document = edit_document:document(DocId),
@@ -100,15 +100,15 @@ handle_request('GET', ["doc", DocId] , Req) ->
 %% these are only here because matt and manuel are self hosting and can't properly path the files..
 %% remove when they self host
 
-handle_request('GET', [ "doc", "images" | Path] , Req) ->
+handle_request('GET', [ "d", "images" | Path] , Req) ->
   File = filename:join(["www/images" | Path]),
   Req:file(File);
 
-handle_request('GET', [ "doc", "js" | Path] , Req) ->
+handle_request('GET', [ "d", "js" | Path] , Req) ->
   File = filename:join(["www/js" | Path]),
   Req:file(File);
 
-handle_request('GET', [ "doc", "stylesheets" |  Path] , Req) ->
+handle_request('GET', [ "d", "stylesheets" |  Path] , Req) ->
   File = filename:join(["www/stylesheets" | Path]),
   Req:file(File);
 
