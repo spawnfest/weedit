@@ -97,6 +97,16 @@ handle_request('GET', ["d", DocId] , Req) ->
   {ok, FileData} = file:read_file(filename:join(["www","document.html"])),
   Req:ok(mustache:render(FileData,Mustaches));
 
+%% read only documents - rendered with title, tags and body to the latest version
+handle_request('GET', ["r", DocId] , Req) ->
+  ?INFO("RENDERING READ ONLY DOC ~p ~n", [DocId]),
+  Document = edit_document:document(DocId),
+  Mustaches = dict:from_list([{title,     binary_to_list(Document#edit_document.title)},
+                              {body,      binary_to_list(Document#edit_document.body)},
+                              {hash_tags, Document#edit_document.hash_tags}]),
+  {ok, FileData} = file:read_file(filename:join(["www","read_only_document.html"])),
+  Req:ok(mustache:render(FileData,Mustaches));
+
 %% these are only here because matt and manuel are self hosting and can't properly path the files..
 %% remove when they self host
 

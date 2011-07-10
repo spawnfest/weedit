@@ -1,0 +1,66 @@
+<html>
+	<head>
+    	<title>{{title}}</title>
+		<link type="text/css" rel="stylesheet" href="stylesheets/screen.css" />
+  		<link type="text/css" rel="stylesheet" href="stylesheets/weedit.css" />
+		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery.countdown.min.js"></script>
+		<script type="text/javascript" src="js/jquery.localscroll-min.js"></script>
+		<script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
+		<script type="text/javascript" src="js/jquery.serialScroll-1.2.2-min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery.spinner.js"></script>
+	  <script type="text/javascript" src="js/jquery.base64.min.js"></script>
+		<script type="text/javascript" src="js/json2.js"></script>
+		<script type="text/javascript" src="js/socket.io.js"></script>
+      <script type="text/javascript" src="js/tiny_mce/jquery.tinymce.js"></script>
+      <script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+	  	<script type="text/javascript" src="js/diff/diff_match_patch.js"></script>
+	  	<script type="text/javascript" src="js/application.js"></script>
+      <script src="http://platform.twitter.com/anywhere.js?id=wvVPSaN4aH4Sx9hy59DbEQ&v=1.2" type="text/javascript"></script>
+	</head>
+	<body style="background-color:#e4e4e8">		
+		<div class="container">
+			<div class="span-24">
+				<div id="logo" class="span-5 first">
+          <img src='images/logo.png'/>
+				</div>	
+				<div id="title" class="span-19 last">
+          <div id="document_title">{{title}}</div>
+				</div>
+			</div>
+			<div class="span-24">
+				<div class="span-5">
+					<div id="userlist"></div>
+				</div>
+				<div class="span-14 last">
+          <div name="editor" id="editor">{{body}}</div>				
+
+
+				</div>
+				<div class="span-5 last">					
+					<div id="searchbox">
+						<div id="searchtitle"><a id="addterm" name="newsearchterm" href="#" title="Add Search Term">(add search term)</a></div>
+						<div id="searchterms"></div>
+					</div>					
+					<div id="tweets"></div>					
+          <div id="tbox"></div>
+
+				</div>			
+			</div>
+      <div class="container">
+            <div style="padding-left:85px; font-size:12px; " align="center">
+						<table id="documentmenu" align="center">
+							<tr>
+								<td><a class='docfooterlink' href="http://inakanetworks.com" title="Inaka Networks">Ruby and Erlang Nearshoring @ Inaka Networks</a></td>
+								<td>|</td>
+								<td><a class='docfooterlink' href="http://erlang.org" title="erlang.org">Powered by Erlang</a></td>
+								<td>|</td>
+								<td><a class='docfooterlink' href="http://typesocial.com/d/about" title="About">About</a></td>
+							</tr>
+						</table>
+          </div>
+      </div>
+		</div>
+	</body>
+</html>
