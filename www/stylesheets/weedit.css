@@ -37,7 +37,7 @@ hr {
  
 #boxes #dialog {
   width:375px; 
-  height:203px;
+  height:325px;
   padding:40px;
   background-color:#ffffff;
   -moz-border-radius: 7px;
@@ -269,7 +269,13 @@ font-family: courier, courier new;
   	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
   	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-	overflow: hidden
+	overflow: hidden;
 }
 
+a.docfooterlink
+{
+  text-decoration:none; 
+  font-size:12px; 
+  font-family:courier new;
+}
 
