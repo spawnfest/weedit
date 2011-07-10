@@ -78,6 +78,9 @@ mochi_to_jsx(Other) -> Other.
 
 mochi_to_jsx_prop({Key, Value}) -> {Key, mochi_to_jsx(Value)}.
 
--spec to_jsx(term()) -> [proplists:property()].
+to_jsx([U | Rest]) ->
+  to_jsx(U) ++ to_jsx(Rest);
 to_jsx(#edit_user{id = Id, username = Name}) ->
-  [{<<"id">>, Id}, {<<"username">>, Name}].
+  [{<<"id">>, Id}, {<<"username">>, Name}];
+to_jsx([]) -> [].
+
