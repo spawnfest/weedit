@@ -51,6 +51,8 @@ var TSocket = {
         case 'edit_body':
           TypeSocial.setBody(data.diff)
           break;
+        case 'set_hash_tags':
+          AddHashTerm.addlist(data.tags)
         default:
           console.log("I don't know this action" + data);
       }
@@ -252,6 +254,9 @@ var AddHashTerm = {
 		if($("#searchterms > div").size() == 10) {
 			$('#addterm').remove();
 		}		
+	}
+	loadlist: function(jsonlist)) {		
+		console.log(jsonlist);
 	}
 }
 
