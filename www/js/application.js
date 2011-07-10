@@ -337,7 +337,8 @@ var AddHashTerm = {
 	
 	  search_arr.push(new_search);
 
-	  AddTweet.load(search_arr,'terms');
+    if (search_arr.length>0)
+  	  AddTweet.load(search_arr,'terms');
 	},
 	deleteitem: function(div_text) {
 		var terms = new Array();
