@@ -471,7 +471,7 @@ var LoadTweetBox = {
 				label: "Thoughts?",
 		  		height: 50,
 		  		width: 190,
-		  		defaultContent: "<Type Socially!>"
+		  		defaultContent: "#typesocial " + location + " "
 			});
 		});
 	}
