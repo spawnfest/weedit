@@ -77,7 +77,8 @@ var TSocket = {
     this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
   doSetTwitter: function(terms) { 
-    console.log("sending terms " + terms)
+    console.log("sending terms ");
+    console.log(terms);
     this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
   }
 }
@@ -233,8 +234,7 @@ var AddHashTerm = {
 		
     terms.push(term);
 
-		TSocket.doSetTwitter(term);
-    console.log("after socket");
+		TSocket.doSetTwitter(terms);
 		
 		
 	},
