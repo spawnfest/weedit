@@ -404,7 +404,7 @@ $(document).ready(function(){
             console.log(error);
         }
 	    } else {  
-	    	//LoginBox.init();
+	    	LoginBox.init();
 	    }  
 	});
 
