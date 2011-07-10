@@ -241,9 +241,8 @@ var AddHashTerm = {
 	loadlist: function(jsonlist) {		
     console.log(jsonlist);
     $('#searchterms').remove("div");
-    $.each(jsonlist, function(){
-  	  sanitizedterm		= "#" + term;
-
+    $.each(jsonlist, function(i,val){
+  	  sanitizedterm		= "#" + val;
 		  if ($(sanitizedterm).length == 0) {
 			  $('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
 		  }  
@@ -387,7 +386,6 @@ $(document).ready(function(){
 
   TypeSocial.init();
   RefreshClientList.load();
-  RefreshTweetList.load();  
   LoadTweetBox.init();
   AddHashTerm.init();
 
