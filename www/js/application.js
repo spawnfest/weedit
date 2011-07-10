@@ -76,12 +76,12 @@ var TSocket = {
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":JSON.stringify(diff)});
+    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":$.base64.encode(JSON.stringify(diff))});
   },
   doSetDoc: function(diff) { 
     console.log(diff); 
     if (this.object)
-      this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
+      this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":$.base64.encode(JSON.stringify(diff))});
   },
   doSetHashTags: function(terms) { 
     console.log("sending terms ");
