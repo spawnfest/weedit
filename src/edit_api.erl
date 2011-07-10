@@ -28,14 +28,14 @@ handle_command(ClientPid, <<"set_twitter">>, DocId, Data) ->
 %% diff title
 handle_command(ClientPid, <<"edit_title">>, DocId, Data) -> 
   TitleDiffText = proplists:get_value(<<"diff">>, Data, <<>>),
-  TitleDiff = mochijson2:decode(TitleDiffText),
+  TitleDiff = itweet_mochijson2:decode(TitleDiffText),
   ?INFO("got title diff: ~p ~n",[TitleDiff]),
   edit_document:edit_title(DocId,ClientPid,TitleDiff),
   noreply;
  
 handle_command(ClientPid, <<"edit_body">>, DocId, Data) -> 
   DocDiffText = proplists:get_value(<<"diff">>, Data, <<>>),
-  DocDiff = mochijson2:decode(DocDiffText),
+  DocDiff = itweet_mochijson2:decode(DocDiffText),
   ?INFO("got diff of document: ~p ~n",[DocDiff]),
   edit_document:edit_body(DocId,ClientPid,DocDiff),
   noreply.

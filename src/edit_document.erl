@@ -172,7 +172,7 @@ handle_cast({edit_title, Diff, Token}, State) ->
   ok = edit_db:add_version(NewDocument, Token, {edit_title, Diff}),
   ?INFO("in edit_title dif: ~p, title: ~p, docid: ~p ~n",[Diff,Title,DocId]),
   gen_event:notify(event_dispatcher(DocId, local),
-          {outbound_message, <<"edit_title">>, [{<<"diff">>,Diff}], Token}),
+                   {outbound_message, <<"edit_title">>, [{<<"diff">>,Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
 
 %% save versions of body
@@ -181,7 +181,7 @@ handle_cast({edit_body, Diff, Token}, State) ->
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body)},
   ok = edit_db:add_version(NewDocument, Token, {edit_body, Diff}),
   gen_event:notify(event_dispatcher(DocId, local),
-    {outbound_message, <<"edit_body">>, [{<<"diff">>,Diff}], Token}),
+                   {outbound_message, <<"edit_body">>, [{<<"diff">>,Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
 
 %% save login of a user
@@ -232,6 +232,5 @@ init_js() ->
   {ok, F} = file:read_file("www/js/diff/diff_match_patch.js"),
   js:define(JS,F),
   JS.
-
 
 apply_diff(Diff, Something) -> Something.

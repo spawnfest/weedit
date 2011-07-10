@@ -1,5 +1,5 @@
 -type document_id() :: string().
--type diff() :: [proplists:property()].
+-type diff() :: itweet_mochijson2:json_object().
 
 -record(edit_user, {id        :: pos_integer(),
                     username  :: string()}).
