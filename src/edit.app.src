@@ -10,8 +10,8 @@
          {riak_port, 8087},
          {twitter_stream_user, "inaka_testing"},
          {twitter_stream_password, "nohaymonedas"},
-         {initial_title, <<"Welcome to TypeWith.me!">>},
-         {initial_body, <<"This document text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents in your Web browser.\n",
+         {initial_title, <<"Welcome to TypeSocial!">>},
+         {initial_body, <<"The changes to this document are synchronized to the TypeSocial. Everyone on this page sees the exact same text at the same time!\nYou can type together and take notes during conferences, meetings, and classes, and see the tweets sent during the event later.\nUse the hashtag search on the right to search for the topic relevant to the event.\n",
                           "\n",
-                          "Go ahead - send the link to this page to a friend, colleague, or co-worker and watch the magic unfold!">>}]}
+                          "Send the link to your friends and colleagues and take notes at conferences and meetings together!">>}]}
  ]}.

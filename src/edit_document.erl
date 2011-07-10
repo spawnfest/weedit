@@ -165,7 +165,7 @@ handle_cast({edit_title, Diff, Token}, State) ->
 %% save versions of body
 handle_cast({edit_body, Diff, Token}, State) ->
   #edit_document{id = DocId, body = Body} = State#state.document,
-  NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body, State#state.js_context)},
+  NewDocument = State#state.document#edit_document{body = apply_diff(Diff, Body, State#state.js_context)},
   ok = edit_db:update(NewDocument, edit_body, Diff),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"edit_body">>, [{<<"diff">>, Diff}], Token}),
