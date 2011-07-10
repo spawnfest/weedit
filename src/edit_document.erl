@@ -12,7 +12,7 @@
 
 -behaviour(gen_server).
 
--export([create/0, create/1, start_link/1]).
+-export([ensure_started/1, start_link/1]).
 -export([event_dispatcher/1, process_name/1, stop/1]).
 -export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -30,18 +30,11 @@
 %%-------------------------------------------------------------------
 %% PUBLIC API
 %%-------------------------------------------------------------------
-%% @doc Creates a brand new document
--spec create() -> {ok, document_id()}.
-create() ->
-  {ok, DocId} = edit_db:create_document(),
-  {ok, _Pid} = edit_doc_sup:start_doc(DocId),
-  {ok, DocId}.
-
--spec create(string()) -> {ok, document_id()}.
-create(DocId) ->
-  {ok, DocId} = edit_db:create_document(DocId),
-  {ok, _Pid} = edit_doc_sup:start_doc(DocId),
-  {ok, DocId}.
+%% @doc Creates a new document if it doesn't exists and starts its managing process if its not already started
+-spec ensure_started(string()) -> {ok, pid()}.
+ensure_started(DocId) ->
+  ok = edit_db:ensure_document(DocId),
+  edit_doc_sup:start_doc(DocId).
 
 %% @doc Starts a listener
 -spec start_link(document_id()) -> {ok, pid()}.
@@ -84,13 +77,7 @@ stop(DocId) ->
 
 -spec document(document_id()) -> #edit_document{}.
 document(DocId) ->
-  Doc = (catch gen_server:call(process_name(DocId), document)),
-  case Doc of
-    {'EXIT', {noproc, _ }} -> 
-      edit_document:create(DocId),
-      document(DocId);
-    Reply -> Reply
-  end.
+  gen_server:call(process_name(DocId), document).
 
 -spec edit_title(document_id(), term(), diff()) -> ok.
 edit_title(DocId, Token, Diff) ->
@@ -145,7 +132,7 @@ handle_call(stop, _From, State) ->
 -spec handle_cast(term(), state()) -> {noreply, state()}.
 handle_cast({add_tweet, Tweet}, State) ->
   #edit_document{id = DocId} = State#state.document,
-  ok = edit_db:add_tweet(DocId, Tweet),
+  ok = edit_db:update(DocId, undefined, tweet, Tweet),
   gen_event:notify(event_dispatcher(DocId, local),
     {outbound_message, <<"tweet">>, [{<<"tweet">>,edit_util:mochi_to_jsx(Tweet)}], undefined}),
   {noreply, State};
@@ -154,7 +141,7 @@ handle_cast({add_tweet, Tweet}, State) ->
 handle_cast({set_hash_tags, HashTags, Token}, State) ->
   #edit_document{id = DocId} = State#state.document,
   NewDocument = State#state.document#edit_document{hash_tags = HashTags},
-  ok = edit_db:add_version(NewDocument, Token, {hashtags, HashTags}),
+  ok = edit_db:update(NewDocument, Token, hashtags, HashTags),
   ok = edit_itweep:update_document(NewDocument),
   edit_document_handler:unsubscribe(DocId),
   try edit_document_handler:subscribe(NewDocument)
@@ -170,7 +157,7 @@ handle_cast({set_hash_tags, HashTags, Token}, State) ->
 handle_cast({edit_title, Diff, Token}, State) ->
   #edit_document{id = DocId, title = Title} = State#state.document,
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Title, State#state.js_context)},
-  ok = edit_db:add_version(NewDocument, Token, {edit_title, Diff}),
+  ok = edit_db:update(NewDocument, Token, edit_title, Diff),
   ?INFO("in edit_title diff: ~p, title: ~p, docid: ~p ~n",[Diff,Title,DocId]),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"edit_title">>, [{<<"diff">>, Diff}], Token}),
@@ -180,7 +167,7 @@ handle_cast({edit_title, Diff, Token}, State) ->
 handle_cast({edit_body, Diff, Token}, State) ->
   #edit_document{id = DocId, body = Body} = State#state.document,
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body, State#state.js_context)},
-  ok = edit_db:add_version(NewDocument, Token, {edit_body, Diff}),
+  ok = edit_db:update(NewDocument, Token, edit_body, Diff),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"edit_body">>, [{<<"diff">>, Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
@@ -191,7 +178,7 @@ handle_cast({login, User, Token}, State) ->
   NewUsers = lists:keystore(User#edit_user.id, #edit_user.id, Users, User),
   NewDocument = State#state.document#edit_document{users = NewUsers},
   ?INFO("New users are : ~p ~n",[NewUsers]),
-  ok = edit_db:add_version(NewDocument, Token, {login, User}),
+  ok = edit_db:update(NewDocument, Token, login, User),
   ok = edit_itweep:update_document(NewDocument),
   edit_document_handler:unsubscribe(DocId),
   try edit_document_handler:subscribe(NewDocument)
