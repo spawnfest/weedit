@@ -52,7 +52,9 @@ var TSocket = {
           TypeSocial.setBody(data.diff)
           break;
         case 'set_hash_tags':
-          AddHashTerm.addlist(data.tags)
+          console.log('set hash tags');
+          AddHashTerm.loadlist(data.tags);
+          break;
         default:
           console.log("I don't know this action" + data);
       }
@@ -75,8 +77,8 @@ var TSocket = {
     this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
   doSetTwitter: function(terms) { 
-    console.log(terms); 
-    this.object.send({"doc_id":this.doc_id,"action":"set_twitter","hashtag":terms});
+    console.log("sending terms " + terms)
+    this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
   }
 }
 
@@ -216,50 +218,34 @@ var RefreshTweetList = {
 var AddHashTerm = {
 	init: function() {
 		var terms=[];
-		jQuery.each(terms, function() {
-			if($("#searchterms").size() < 10 && $(this).length == 0) {
-				$('<div><div id="'+ this + '" class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);				
-			}
-			
-			if($("#searchterms").size() == 10) {
-				$('#addterm').remove();
-			}
-		});
 	},
 	add: function(term) {
-		if($("#searchterms").size() < 10) {
-			sanitizedterm	= "#" + term;
-			if ($(sanitizedterm).length == 0) {
-				$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').appendTo('#searchterms').fadeIn(1000);
-				
-			}
-		}
-		
+			
 		if($("#searchterms").size() == 10) {
 			$('#addterm').remove();
 		}
 		
 		var terms = new Array();
 		$("#searchterms > div").each(function(index, domEle) {
-			console.log($(this).attr('id'));
-			terms.push($(this).attr('id'));
+			console.log($(this).text());
+			terms.push($(this).text());
 		});
 		
-		TSocket.doSetTwitter(terms);
+    terms.push(term);
+
+		TSocket.doSetTwitter(term);
+    console.log("after socket");
 		
 		
 	},
 	loadlist: function(jsonlist) {		
-		console.log(jsonlist);
+    console.log('inroundtrip');
 		//AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
 		//sanitizedterm		= "#" + term;
 		//if ($(sanitizedterm).length == 0) {
 		//	$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
 		//}
-		
-		if($("#searchterms > div").size() == 10) {
-			$('#addterm').remove();
-		}
+	
 	}
 }
 
@@ -403,7 +389,7 @@ $(document).ready(function(){
             console.log(error);
         }
 	    } else {  
-	    	LoginBox.init();
+	    	//LoginBox.init();
 	    }  
 	});
 

@@ -20,8 +20,9 @@ handle_command(_ClientPid, <<"login">>, DocId, Data) ->
   edit_document:login(DocId,i_want_my_message_back,User),
   noreply;
 
-handle_command(ClientPid, <<"set_twitter">>, DocId, Data) -> 
-  HashTags = edit_util:safe_term_to_binary(proplists:get_value(<<"hashtag">>, Data, <<>>)),
+handle_command(ClientPid, <<"set_hash_tags">>, DocId, Data) -> 
+  HashTags = proplists:get_value(<<"tags">>, Data, <<>>),
+  ?INFO("got hashtags of ~p ~n",[HashTags]),
   edit_document:set_hash_tags(DocId,ClientPid,HashTags),
   noreply;
  

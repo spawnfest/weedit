@@ -2,6 +2,7 @@
 -behaviour(gen_server).
 
 -include("edit_records.hrl").
+-include("elog.hrl").
 
 -define(DOC_TABLE,edit_documents).
 -define(URL_TABLE,edit_urls).
@@ -44,6 +45,7 @@ set_hash_tags(DocId, HashTags) ->
 
 %% TODO:SPEC
 add_version(Document,User,Patch) -> 
+  ?INFO("db: add version: ~p ~n",[Patch]),
   gen_server:call(?MODULE,{add_version,Document,User,Patch}).
 
 add_tweet(DocId, Tweet) ->

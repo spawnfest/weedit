@@ -149,6 +149,8 @@ handle_cast({add_tweet, Tweet}, State) ->
   gen_event:notify(event_dispatcher(DocId, local),
     {outbound_message, <<"tweet">>, [{<<"tweet">>,edit_util:mochi_to_jsx(Tweet)}], undefined}),
   {noreply, State};
+
+% save hash tags and broadcast to clients
 handle_cast({set_hash_tags, HashTags, Token}, State) ->
   #edit_document{id = DocId} = State#state.document,
   NewDocument = State#state.document#edit_document{hash_tags = HashTags},
