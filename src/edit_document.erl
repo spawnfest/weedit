@@ -189,6 +189,7 @@ handle_cast({login, User, Token}, State) ->
   #edit_document{id = DocId, users = Users} = State#state.document,
   NewUsers = lists:keystore(User#edit_user.id, #edit_user.id, Users, User),
   NewDocument = State#state.document#edit_document{users = NewUsers},
+  ?INFO("New users are : ~p ~n",[NewUsers]),
   ok = edit_db:add_version(NewDocument, Token, {login, User}),
   ok = edit_itweep:update_document(NewDocument),
   edit_document_handler:unsubscribe(DocId),
@@ -198,7 +199,7 @@ handle_cast({login, User, Token}, State) ->
       ?ERROR("Document ~s couldn't subscribe to the twitter stream.  No tweets for it.~n", [DocId])
   end,
   gen_event:notify(event_dispatcher(DocId, local),
-      {outbound_message, <<"set_users">>, [{<<"users">>,edit_util:to_jsx(Users)}], Token}),
+      {outbound_message, <<"set_users">>, [{<<"users">>,edit_util:to_jsx(NewUsers)}], Token}),
   {noreply, State#state{document = NewDocument}}.
 
 %% @hidden

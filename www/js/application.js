@@ -168,7 +168,7 @@ var TypeSocial = {
     }
 
     // Let's monitor title changes
-    this.startInterval(2000);
+    this.startInterval(500);
 
 
   }
