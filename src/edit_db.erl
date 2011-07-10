@@ -16,7 +16,7 @@
 -export([start_link/0]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 -export([create_document/0, ensure_document/1, document/1]).
--export([update/3]).
+-export([update/3, history/1]).
 
 -record(state, {riak                :: pid(),
                 riak_bucket_prefix  :: binary()
@@ -49,6 +49,10 @@ document(DocId) ->
 update(Document, Type, Patch) -> 
   ?INFO("db: ~p to ~s~n", [Type, Document#edit_document.id]),
   gen_server:cast(?MODULE, {update, Document, Type, Patch}).
+
+-spec history(document_id()) -> [{atom(), term()}].
+history(DocId) ->
+  gen_server:call(?MODULE, {history, DocId}, infinity).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -83,7 +87,7 @@ handle_call({document, DocId}, _From, State) ->
             JsonObj = itweet_mochijson2:decode(riakc_obj:get_value(RiakObj)),
             Document = #edit_document{id = binary_to_list(itweet_mochijson2:get_value(<<"id">>, JsonObj)),
                                       body = itweet_mochijson2:get_value(<<"body">>, JsonObj),
-                                      hash_tags = itweet_mochijson2:get_value(<<"hash-tags">>, JsonObj),
+                                      hash_tags = itweet_mochijson2:get_value(<<"hash-tags">>, JsonObj, []),
                                       title = itweet_mochijson2:get_value(<<"title">>, JsonObj),
                                       users = lists:map(
                                                 fun(UserJsonObj) ->
@@ -94,16 +98,49 @@ handle_call({document, DocId}, _From, State) ->
             {reply, {ok, Document}, State}
           catch
             _:Reason ->
-              throw({error, Reason})
+              {reply, {error, Reason}, State}
           end;
         Ctype ->
-          throw({error, {unknown_ctype, Ctype}})
+          {error, {unknown_ctype, Ctype}}
       end;
     {error, Error} ->
       {reply, {error, Error}, State};
     Other ->
       {reply, {error, Other}, State}
-  end.
+  end;
+handle_call({history, DocId}, _From, State) ->
+  Bucket = <<(State#state.riak_bucket_prefix)/binary,
+             (edit_util:safe_term_to_binary(DocId))/binary,
+             "-updates">>,
+  {ok, UpdateKeys} = riakc_pb_socket:list_keys(State#state.riak, Bucket),
+  Updates =
+      lists:map(
+        fun(Key) ->
+                case riakc_pb_socket:get(State#state.riak, Bucket, Key) of
+                  {ok, RiakObj} ->
+                    case riakc_obj:get_content_type(RiakObj) of
+                      "application/json" ->
+                        try
+                          JsonObj = itweet_mochijson2:decode(riakc_obj:get_value(RiakObj)),
+                          {itweet_mochijson2:get_value(<<"edit-timestamp">>, JsonObj, 0),
+                           binary_to_atom(
+                             itweet_mochijson2:get_value(<<"edit-type">>, JsonObj, <<"undefined">>),
+                             utf8),
+                           itweet_mochijson2:get_value(<<"edit-patch">>, JsonObj, null)}
+                        catch
+                          _:Reason ->
+                            throw({reply, {error, Reason}, State})
+                        end;
+                      Ctype ->
+                        throw({error, {unknown_ctype, Ctype}})
+                    end;
+                  {error, Error} ->
+                    throw({reply, {error, Error}, State});
+                  Other ->
+                    throw({reply, {error, Other}, State})
+                end
+        end, UpdateKeys),
+  {reply, lists:keysort(1, Updates), State}.
 
 %% @private
 -spec handle_cast(term(), state()) -> {noreply, state()}.
