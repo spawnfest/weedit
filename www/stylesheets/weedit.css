@@ -213,13 +213,14 @@ hr {
 	float:left;
 }
 
-#searchterm {
+.searchterm {
 	float:left;
 	vertical-align:top;
-	padding:2px;
+	padding-left:8px;
 	color:#98AFC7;
-	font-size:14pt;
+	font-size:10pt;
 	font-weight:bold;
+  width:95%
 }
 
 .tweet {
