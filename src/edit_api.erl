@@ -21,8 +21,8 @@ handle_command(_ClientPid, <<"login">>, DocId, Data) ->
   noreply;
 
 handle_command(ClientPid, <<"set_hash_tags">>, DocId, Data) -> 
-  HashTags = proplists:get_value(<<"tags">>, Data, <<>>),
-  ?INFO("got hashtags of ~p ~n",[HashTags]),
+  ?INFO("got hashtags of ~p ~n",[Data]),
+  HashTags = proplists:get_value(<<"tags">>, Data, []),
   edit_document:set_hash_tags(DocId,ClientPid,HashTags),
   noreply;
  
