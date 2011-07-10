@@ -94,6 +94,11 @@ hr {
 #login_info h2 {
 	font-size: 24pt;
 	font-spacing:-1px;
+  margin-top:20px;
+}
+
+#login_info h3 {
+  font-family: Courier, Courier New;
 }
 
 #login_logo {
@@ -107,6 +112,9 @@ hr {
 #twitter_login_logo {
 	height: 75px;
 	width: 75px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 .mainbody {
 	min-height:800px;
@@ -216,8 +224,10 @@ hr {
 #typesocial
 {
   position:absolute;
-  font-size:18pt;
-  color:white;
+  top:20;
+  left:175;
+  font-size:10pt;
+  color:#fefef8;
 }
 
 #searchterms {
