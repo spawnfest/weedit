@@ -263,7 +263,7 @@ var AddHashTerm = {
     console.log(jsonlist);
     $('#searchterms').children().remove("div");
     $.each(jsonlist, function(i,val){
-  	  sanitizedterm		= "#" + val;
+  	  sanitizedterm	= "#" + val.replace(/^#/,'');
 			$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
     });
 	
