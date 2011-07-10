@@ -240,7 +240,8 @@ var AddHashTerm = {
 		}
 		
 		var terms = new Array();
-		$('#searchterms').each(function(index, domEle) {
+		$('#searchterm').each(function(index, domEle) {
+			console.log($(this).attr('id'));
 			terms.push($(this).attr('id'));
 		});
 		
