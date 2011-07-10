@@ -291,7 +291,7 @@ var LoginBox = {
 	        $('#mask, .window').hide();
 	    });	    	   
 	   	
-	    twttr.anywhere(function (T) {
+	    twttr.anywhere(function (T) {	    	
 	    	document.getElementById("follow-placeholder").onclick = function () {
 	    		T.signIn();
 	    	};
