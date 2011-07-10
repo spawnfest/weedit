@@ -91,9 +91,9 @@ edit_body(DocId, Token, Diff) ->
 login(DocId, Token, User) ->
   gen_server:cast(process_name(DocId), {login, User, Token}).
 
--spec hello(document_id(), term(), #edit_user{}) -> ok.
-login(DocId, Token, User) ->
-  gen_server:cast(process_name(DocId), {login, User, Token}).
+-spec hello(document_id(), term()) -> ok.
+hello(DocId, Token) ->
+  gen_server:cast(process_name(DocId), {hello, Token}).
 
 %% ------------------------------------------------------------------
 %% Behaviour Callbacks
