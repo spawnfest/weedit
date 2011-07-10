@@ -213,28 +213,12 @@ var RefreshTweetList = {
 	}
 }
 
-var GetHashTerms = {
-	init: function() {
-		var terms=[];
-		
-		jQuery.each(terms, function() {
-			if($("#searchterms > div").size() < 10) {
-				$('<div><div class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
-			}
-			
-			if($("#searchterms > div").size() == 10) {
-				$('#addterm').remove();
-			}
-		});
-	}
-}
-
 var AddHashTerm = {
 	init: function() {
 		var terms=[];
 		jQuery.each(terms, function() {
-			if($("#searchterms > div").size() < 10) {
-				$('<div><div class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
+			if($("#searchterms > div").size() < 10 && $(this).length == 0) {
+				$('<div><div id="'+ this + '" class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);				
 			}
 			
 			if($("#searchterms > div").size() == 10) {
@@ -244,7 +228,7 @@ var AddHashTerm = {
 	},
 	add: function(term) {
 		if($("#searchterms > div").size() < 10) {
-			sanitizedterm	= "#" + term
+			sanitizedterm	= "#" + term;
 			if ($(santizedterm).length == 0) {
 				$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
 				TSocket.doSetTwitter(sanitizedterm);
@@ -254,9 +238,18 @@ var AddHashTerm = {
 		if($("#searchterms > div").size() == 10) {
 			$('#addterm').remove();
 		}		
-	}
+	},
 	loadlist: function(jsonlist)) {		
 		console.log(jsonlist);
+		//AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
+		//sanitizedterm		= "#" + term;
+		//if ($(santizedterm).length == 0) {
+		//	$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
+		//}
+		
+		if($("#searchterms > div").size() == 10) {
+			$('#addterm').remove();
+		}
 	}
 }
 
@@ -380,7 +373,6 @@ $(document).ready(function(){
 
   TypeSocial.init();
   RefreshClientList.load();
-  GetHashTerms.init();
   RefreshTweetList.load();  
   LoadTweetBox.init();
   AddHashTerm.init();
