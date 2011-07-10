@@ -376,6 +376,7 @@ $(document).ready(function(){
 	    if(!twitter.isConnected()){  
 	        twitteruser		= twitter.currentUser.data('screen_name');
 	        twitterimgurl	= twitter.currentUser.data('profile_image_url');
+	        console.log("User " + twitteruser + " is logged in");
 	        TSocket.doLogin(twitteruser,twitterimgurl);
 	    } else {  
 	    	LoginBox.init();
