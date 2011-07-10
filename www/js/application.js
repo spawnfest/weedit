@@ -242,7 +242,6 @@ var AddHashTerm = {
 	},
 	add: function(term) {
 
-    term = "#" + term;
 			
 		if($("#searchterms").size() == 10) {
 			$('#addterm').remove();
