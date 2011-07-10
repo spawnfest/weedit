@@ -36,8 +36,10 @@ handle_command(ClientPid, <<"hello">>, DocId, _Data) -> %% required so that we c
                                        {<<"tags">>,HashTags}
                                       ]}),
   proc_lib:spawn(fun() ->
+                         ?INFO("About to send old tweets from ~s to ~p~n", [DocId, ClientPid]),
                          lists:foreach(
                            fun({_TS, tweet, Tweet}) ->
+                                   ?INFO("Sending old tweet from ~s to ~p~n", [DocId, ClientPid]),
                                    socketio_client:send(ClientPid,
                                                         #msg{json = true,
                                                              content = [{<<"error">>,  false},
