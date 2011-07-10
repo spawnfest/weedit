@@ -472,7 +472,6 @@ $(document).ready(function(){
 
   TypeSocial.init();
   LoadTweetBox.init();
-  AddHashTerm.init();
 
   $('#addterm').click(function() {
 	  LoadSearchTerm.open();
