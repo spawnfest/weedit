@@ -224,9 +224,10 @@ var TypeSocial = {
 }
 
 var RefreshClientList = {
-	load: function(users) {		
+	load: function(users) {
+		users = $.unique(users.map(function(v){ return v.username;}));
 		$.each(users, function() {
-			var username  = this.username;
+			var username  = this;
 
 			if ($("#"+username).length == 0) {
 
