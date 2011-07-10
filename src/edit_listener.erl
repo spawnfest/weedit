@@ -135,6 +135,7 @@ handle_request('GET', [ "r", "js" | Path] , Req) ->
 
 handle_request('GET', [ "r", "stylesheets" |  Path] , Req) ->
   File = filename:join(["www/stylesheets" | Path]),
+  Req:file(File);
  
 %% Handle everything else
 
