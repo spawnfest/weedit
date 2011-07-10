@@ -39,6 +39,12 @@ var TSocket = {
 
     this.object.on('connect', function(){
       console.log("We connected!!");
+
+
+      $('#addterm').spinner({ position: 'center', hide: true });
+
+      
+      
       TSocket.doHello();
     });
 
@@ -85,6 +91,7 @@ var TSocket = {
   doSetHashTags: function(terms) { 
     console.log("sending terms ");
     console.log(terms);
+    $('#addterm').spinner('remove');
     if (this.object)
       this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
   }
@@ -160,6 +167,8 @@ var TypeSocial = {
     clearInterval(this.timer);
   },
   init: function(ext_config) {
+
+    $('#addterm').spinner({position:'center',hide:true});
 
     // Create the editor and set the config vars
     if (ext_config) {this.config = config}
