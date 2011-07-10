@@ -59,9 +59,9 @@ var TSocket = {
   doHello: function(){
     this.object.send({"doc_id":this.doc_id,"action":"hello"});
   },
-  doLogin: function(id,username) { 
-    console.log("id and username = " + [id,username]); 
-    //this.object.send('action':'login');
+  doLogin: function(screen_name, image_url) { 
+    console.log("id and username = " + [screen_name,image_url]); 
+    this.object.send('action':'login',"twitter_screen_name":screen_name, "twitter_image_url":image_url);
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
@@ -292,7 +292,7 @@ var LoginBox = {
 	    //$('#mask').click(function () {
 	    //    $(this).hide();
 	    //    $('.window').hide();
-	    //});
+	    //});	    
 	}
 }
 
@@ -362,12 +362,24 @@ var LoadTweetBox = {
 $(document).ready(function(){
 
   TypeSocial.init();
-  LoginBox.init();
+  
   RefreshClientList.load();
   GetHashTerms.init();
   RefreshTweetList.load();  
   LoadTweetBox.init();
   AddHashTerm.init();
+  
+  twttr.anywhere(function(twitter) {  
+	    if(!twitter.isConnected()){  
+	        twitteruser		= twitter.currentUser.data('screen_name');
+	        twitterimgurl	= twitter.currentUser.data('profile_image_url');
+	        TSocket.doLogin(twitteruser,twitterimgurl);
+	    } else {  
+	    	LoginBox.init();
+	    }  
+	});
+  
+  
   
   
   $('#addterm').click(function() {
