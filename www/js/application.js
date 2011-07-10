@@ -224,7 +224,7 @@ var GetHashTerms = {
 
 var AddHashTerm = {
 	init: function() {
-		var terms=["#new term","#new tweet","#more stuff","#illegal","#stopnow"];
+		var terms=[{{hashtag_array}}];
 		jQuery.each(terms, function() {
 			if($("#searchterms > div").size() < 10) {
 				$('<div><div class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
@@ -365,7 +365,6 @@ var LoadTweetBox = {
 $(document).ready(function(){
 
   TypeSocial.init();
-  
   RefreshClientList.load();
   GetHashTerms.init();
   RefreshTweetList.load();  
@@ -373,7 +372,7 @@ $(document).ready(function(){
   AddHashTerm.init();
   
   twttr.anywhere(function(twitter) {  
-	    if(!twitter.isConnected()){  
+	    if(twitter.isConnected()){  
 	        twitteruser		= twitter.currentUser.data('screen_name');
 	        twitterimgurl	= twitter.currentUser.data('profile_image_url');
 	        console.log("User " + twitteruser + " is logged in");
@@ -382,10 +381,7 @@ $(document).ready(function(){
 	    	LoginBox.init();
 	    }  
 	});
-  
-  
-  
-  
+
   $('#addterm').click(function() {
 	  LoadSearchTerm.open();
   });
