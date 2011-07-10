@@ -72,7 +72,7 @@ init([]) ->
       {ok, P} -> P;
       {error, {already_started, P}} -> P
     end,
-  ?INFO("Initialized (dispatcher: ~p), reloading episodes...~n", [Dispatcher]),
+  ?INFO("Initialized (dispatcher: ~p)~n", [Dispatcher]),
   {ok, #state{}}.
 
 %% @hidden
@@ -170,7 +170,7 @@ method(Documents) ->
                                 #edit_user{id = UserId} <- DocUsers]),
   case {sets:to_list(Words), sets:to_list(Users)} of
     {[], []} ->
-      ?INFO("Nothing to follow or track. Docs: ~p~n", [Documents]),
+      ?INFO("Nothing to follow or track. Docs: ~p~n", [[DocId || #edit_document{id = DocId} <- Documents]]),
       rest;
     {[], UserList} ->
       ?INFO("Following~n\t~p~n", [UserList]),
