@@ -193,7 +193,15 @@ handle_cast({login, User, Token}, State) ->
   gen_event:notify(event_dispatcher(DocId, local),
       {outbound_message, <<"set_users">>, [{<<"users">>,
                                             lists:map(fun edit_util:to_jsx/1, NewUsers)}], Token}),
-  {noreply, State#state{document = NewDocument}}.
+  {noreply, State#state{document = NewDocument}};
+
+handle_cast({hello, Token}, State) ->
+  #edit_document{id = DocId, users = Users} = State#state.document,
+  ?INFO("sending users to the new guy: ~p ~n",[Users]),
+  gen_event:notify(event_dispatcher(DocId, local),
+      {outbound_message, <<"set_users">>, [{<<"users">>,
+                                            lists:map(fun edit_util:to_jsx/1, Users)}], Token}),
+  {noreply, State}.
 
 %% @private
 -spec handle_info(term(), state()) -> {noreply, state()} | {stop, term(), state()}.
