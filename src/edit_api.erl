@@ -16,6 +16,7 @@ handle_command(_ClientPid, <<"login">>, DocId, Data) ->
   ?INFO("wow in login: ~p ~p ~n",[DocId,Data]),
   User = #edit_user{id = proplists:get_value(<<"id">>, Data, -1),
                     username = proplists:get_value(<<"username">>, Data, <<>>)},
+  ?INFO("got user of ~p ~n",[User]),
   edit_document:login(DocId,i_want_my_message_back,User),
   noreply;
 
