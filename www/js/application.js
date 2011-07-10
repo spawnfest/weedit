@@ -228,11 +228,11 @@ var AddTweet = {
       img   = tweet.user.profile_image_url;
 
       console.log(tweet);
-		  if (tweet.entities.text.length >= 100) {
+		  if (tweet.text.length >= 100) {
         url   = '<a href="http://twitter.com/#!/' + tweet.user.screen_name + '" target="_blank">...</a>';
-  		  text	= tweet.entities.text.substring(0,100) + ' ' + url;
+  		  text	= tweet.text.substring(0,100) + ' ' + url;
 	  	} else {
-		 		text	= tweet.entities.text;				
+		 		text	= tweet.text;				
 		  }
     } else {
       text  = tweet;
@@ -280,7 +280,7 @@ var AddHashTerm = {
     $.each(jsonlist, function(i,val){
   	  sanitizedterm		= "#" + val;
 
-			$('<div id="'+ val + '" class="searchterm">' + sanitizedterm + '</div>').hide().appendTo('#searchterms').fadeIn(1000);		
+			$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
 
       if (new_search == '') {
         new_search  = "New search term added.  Now searching on " + sanitizedterm;
