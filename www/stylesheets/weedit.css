@@ -181,6 +181,20 @@ hr {
 	font-spacing:-1px;
 }
 
+#searchbox {
+	background-color: white;
+	min-height:50px;
+	max-height:200px;
+	height:auto !important;
+	-moz-border-radius: 7px;
+  	border-radius: 7px;
+  	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	-moz-box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+  	box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+	overflow: hidden;
+	margin-bottom:6px;
+}
+
 #searchtitle {
 	float:left;
 	vertical-align:top;
