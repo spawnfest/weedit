@@ -56,13 +56,15 @@ handle_command(_ClientPid, <<"set_hash_tags">>, DocId, Data) ->
   edit_document:set_hash_tags(DocId, i_want_my_message_back, HashTags),
   noreply;
 handle_command(ClientPid, <<"edit_title">>, DocId, Data) -> 
-  TitleDiffText = proplists:get_value(<<"diff">>, Data, <<>>),
+  TitleDiffB64 = proplists:get_value(<<"diff">>, Data, <<>>),
+  TitleDiffText = base64:decode(TitleDiffB64),
   TitleDiff = itweet_mochijson2:decode(TitleDiffText),
   ?INFO("got title diff: ~p ~n",[TitleDiff]),
   edit_document:edit_title(DocId,ClientPid,TitleDiff),
   noreply;
 handle_command(ClientPid, <<"edit_body">>, DocId, Data) -> 
-  DocDiffText = proplists:get_value(<<"diff">>, Data, <<>>),
+  DocDiffB64 = proplists:get_value(<<"diff">>, Data, <<>>),
+  DocDiffText = base64:decode(DocDiffB64),
   DocDiff = itweet_mochijson2:decode(DocDiffText),
   ?INFO("got diff of document: ~p ~n",[DocDiff]),
   edit_document:edit_body(DocId,ClientPid,DocDiff),
