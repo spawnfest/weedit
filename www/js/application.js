@@ -110,17 +110,19 @@ var TypeSocial = {
     });
   },
   checkDiffChanges: function () {
-    console.log("Checking title...");
 
     if (this.title_last_rev != this.title.val()) {
+        console.log("title changed...");
        diff = this.dmp.getDiff(this.title_last_rev,this.title.val());
        this.title_last_rev = this.title.val();
        this.socket.doSetTitle(diff);
     }
 
-    console.log("Checking doc...");
 
     if (this.editor_last_rev != this.editor.val()) {
+      console.log("doc changed...");
+      console.log(this.editor_last_rev);
+      console.log(this.editor.val());
        diff = this.dmp.getDiff(this.editor_last_rev,this.editor.val());
        this.editor_last_rev = this.editor.val();
        this.socket.doSetDoc(diff);
@@ -374,10 +376,14 @@ $(document).ready(function(){
   
   twttr.anywhere(function(twitter) {  
 	    if(!twitter.isConnected()){  
+        try {
 	        twitteruser		= twitter.currentUser.data('screen_name');
 	        twitterimgurl	= twitter.currentUser.data('profile_image_url');
 	        console.log("User " + twitteruser + " is logged in");
-	        TSocket.doLogin(twitteruser,twitterimgurl);
+  	        TSocket.doLogin(twitteruser,twitterimgurl);
+        } catch(error) {
+            console.log(error);
+        }
 	    } else {  
 	    	LoginBox.init();
 	    }  
