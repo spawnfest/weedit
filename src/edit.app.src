@@ -6,6 +6,8 @@
   {registered, []},
   {applications,[kernel,stdlib,crypto,inets,elog,socketio]},
   {mod, { edit, []}},
-  {env, [{twitter_stream_user, "inaka_testing"},
+  {env, [{riak_server, "127.0.0.1"},
+         {riak_port, 8087},
+         {twitter_stream_user, "inaka_testing"},
          {twitter_stream_password, "nohaymonedas"}]}
  ]}.

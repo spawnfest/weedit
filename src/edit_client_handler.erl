@@ -59,12 +59,12 @@ handle_event({outbound_message, Action, MessagePropList, FromClientPid}, State) 
       noop;
     FromClientPid -> noop; %% the result of a message from ourselves, eat it...
     Pid -> 
-      ?DEBUG("OUTBOUND MESSAGE FOR ~p: ~s ~p ~n", [ClientPid, Action, MessagePropList]),
+      ?INFO("OUTBOUND MESSAGE FOR ~p: ~s~n", [ClientPid, Action]),
       socketio_client:send(Pid,
                            #msg{json = true,
                                 content = [
                                            {<<"error">>, false},
-                                           {<<"action">>,Action} | MessagePropList       
+                                           {<<"action">>,Action} | MessagePropList
                                           ]})
   end,
   {ok, State};
