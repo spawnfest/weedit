@@ -200,7 +200,8 @@ handle_cast({login, User, Token}, State) ->
       ?ERROR("Document ~s couldn't subscribe to the twitter stream.  No tweets for it.~n", [DocId])
   end,
   gen_event:notify(event_dispatcher(DocId, local),
-      {outbound_message, <<"set_users">>, [{<<"users">>,edit_util:to_jsx(NewUsers)}], Token}),
+      {outbound_message, <<"set_users">>, [{<<"users">>,
+                                            lists:map(fun edit_util:to_jsx/1, NewUsers)}], Token}),
   {noreply, State#state{document = NewDocument}}.
 
 %% @hidden
