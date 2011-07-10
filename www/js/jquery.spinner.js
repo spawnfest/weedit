@@ -81,7 +81,7 @@
     // default spinner options
     $.fn.spinner.defaults = {
         position    : 'right'       // left, right, center
-        , img       : 'spinner.gif' // path to spinner img
+        , img       : 'images/spinner.gif' // path to spinner img
         , height    : 16            // height of spinner img
         , width     : 16            // width of spinner img
         , zIndex    : 1001          // z-index of spinner
