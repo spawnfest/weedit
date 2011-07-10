@@ -8,17 +8,17 @@ var DiffMatchPatch = {
     console.log("Patch");
     console.log("Text1 = " + text1);
 
-    patches = this.object.patch_make($.base64.encode(text1),diff_object)
+    patches = this.object.patch_make(text1,diff_object)
 
     console.log("Patches = " + patches);
 
-    results = this.object.patch_apply(patches, $.base64.encode(text1));
+    results = this.object.patch_apply(patches, text1);
 
     console.log("Results = " + results);
-    return $.base64.decode(results[0]);
+    return results[0];
   },
   getDiff: function(text1,text2) {
-    diff = this.object.diff_main($.base64.encode(text1), $.base64.encode(text2), true); 
+    diff = this.object.diff_main(text1, text2, true); 
     if (diff.length > 2) {
       this.object.diff_cleanupSemantic(diff);
     }
@@ -31,6 +31,7 @@ var DiffMatchPatch = {
 var TSocket = {
   object:null,
   doc_id:null,
+  timer:null,
   init: function(hostname,port) {
     this.object = new io.Socket(hostname, {port:port});
     this.object.connect();
@@ -40,7 +41,6 @@ var TSocket = {
     this.object.on('connect', function(){
       console.log("We connected!!");
       
-      TSocket.doHello();
     });
 
 
@@ -70,6 +70,7 @@ var TSocket = {
   },
   doHello: function(){
     this.object.send({"doc_id":this.doc_id,"action":"hello"});
+    clearInterval(this.timer);
   },
   doLogin: function(screen_name, image_url) { 
     console.log("id and username = " + [screen_name,image_url]); 
@@ -89,6 +90,10 @@ var TSocket = {
     console.log(terms);
     if (this.object)
       this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
+  },
+  startInterval: function(){
+    var instance = this;
+    this.timer = setInterval(function() {instance.doHello();},500);
   }
 }
 
@@ -154,7 +159,7 @@ var TypeSocial = {
   setTitle: function(diff) {
     this.title.val(this.dmp.applyPatch(this.title.val(),diff));       
     this.title_last_rev = this.title.val();
-  },
+  TSocket},
   setBody: function(diff) {
     if (this.editor.tinymce()) { 
       this.editor.tinymce().setContent(this.dmp.applyPatch(this.editor.tinymce().getContent(),diff));       
@@ -171,6 +176,7 @@ var TypeSocial = {
   stopInterval: function() {
     clearInterval(this.timer);
   },
+
   init: function(ext_config) {
 
     $('#addterm').spinner({ position: 'center', hide: true });
@@ -202,6 +208,7 @@ var TypeSocial = {
     this.dmp.init();
     // Set up Socket.io
     if (location.hostname != '') {
+      this.socket.startInterval();
     	this.socket.init(location.hostname,location.port);
     }
 
