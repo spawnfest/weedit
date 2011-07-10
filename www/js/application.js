@@ -142,7 +142,7 @@ var TypeSocial = {
     //console.log("Checking doc...");
     var content = "";
     if (this.editor.tinymce()) { 
-      content = this.editor.timymce().getContent();
+      content = this.editor.tinymce().getContent();
     } else { content = this.editor.val(); }
 
     if (this.editor_last_rev != content) {
@@ -448,15 +448,16 @@ var LoadSearchTerm = {
 
 var LoadTweetBox = {
 	init: function() {
-		twttr.anywhere("1",function (T) {
+    $(".tweet-this a").tweetIt();
+		//twttr.anywhere("1",function (T) {
 		
-			T("#tbox").tweetBox({
-				label: "Thoughts?",
-		  		height: 50,
-		  		width: 190,
-		  		defaultContent: "<Type Socially!>"
-			});
-		});
+		//	T("#tbox").tweetBox({
+		//		label: "Thoughts?",
+		//  		height: 50,
+		//  		width: 190,
+		//  		defaultContent: "<Type Socially!>"
+		//	});
+		//});
 	}
 }
 
