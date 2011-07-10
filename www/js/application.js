@@ -74,9 +74,9 @@ var TSocket = {
     console.log(diff); 
     this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
-  doSetTwitter: function(term) { 
+  doSetTwitter: function(terms) { 
     console.log(term); 
-    this.object.send({"doc_id":this.doc_id,"action":"set_twitter","hashtag":term});
+    this.object.send({"doc_id":this.doc_id,"action":"set_twitter","hashtag":terms});
   }
 }
 
@@ -231,13 +231,22 @@ var AddHashTerm = {
 			sanitizedterm	= "#" + term;
 			if ($(sanitizedterm).length == 0) {
 				$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
-				TSocket.doSetTwitter(sanitizedterm);
+				
 			}
 		}
 		
 		if($("#searchterms > div").size() == 10) {
 			$('#addterm').remove();
-		}		
+		}
+		
+		var terms = new Array();
+		$('#searchterms').each(function(index, domEle) {
+			terms.push($(this).attr('id'));
+		});
+		
+		TSocket.doSetTwitter(terms);
+		
+		
 	},
 	loadlist: function(jsonlist) {		
 		console.log(jsonlist);
