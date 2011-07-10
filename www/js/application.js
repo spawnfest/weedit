@@ -228,13 +228,15 @@ var RefreshClientList = {
 		console.log(users);
 	  	var userlist	= '';
 		$.each(users, function() {
-			var user  = this.username;
-
-			if ($("#"+user).length == 0) {
-				if (userlist == '') {
-					userlist	= user;
-				} else {
-					userlist += ',' + user;
+			if (this == undefined) { 
+				var user  = this.username;
+	
+				if ($("#"+user).length == 0) {
+					if (userlist == '') {
+						userlist	= user;
+					} else {
+						userlist += ',' + user;
+					}
 				}
 			}
 		});
