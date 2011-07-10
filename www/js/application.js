@@ -2,6 +2,7 @@ var DiffMatchPatch = {
   object: null,
   init: function() {
     this.object = new diff_match_patch();
+    this.object.Match_Threshold = 0.25;
   },
   applyPatch: function(text1,diff_object) {
     console.log("Patch");
@@ -162,7 +163,7 @@ var TypeSocial = {
     }
 
     // Let's monitor title changes
-    this.startInterval(1000);
+    this.startInterval(2000);
 
 
   }
