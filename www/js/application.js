@@ -55,7 +55,7 @@ var TSocket = {
           AddHashTerm.loadlist(data.tags);
           break;
         case 'tweet':
-          console.log("receive a tweet list");
+          console.log(data.tweet);
           AddTweet.load(data.tweet);
           break;
         case 'set_users':
@@ -210,7 +210,7 @@ var RefreshClientList = {
             $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
           },
           error:function(jqXHR, textStatus, errorThrown) {
-            imageurl  = "images/twitter_logo.png";
+            imageurl  = "images/spawnfest_typewriter.jpeg";
             $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
           }
         });
@@ -232,9 +232,9 @@ var AddTweet = {
 						
 			if($("#tweets > div").size() == 5) {
 				$('#tweets').find('div').first().fadeOut(500).remove();
-				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/spawnfest_typewriter.jpeg">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 			} else {
-				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/spawnfest_typewriter.jpeg">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 			}
 		});
 	}
