@@ -53,6 +53,7 @@ var TSocket = {
           TypeSocial.setBody(data.diff)
           break;
         case 'set_hash_tags':
+          $('#addterm').spinner('remove');
           AddHashTerm.loadlist(data.tags);
           break;
         case 'tweet':
@@ -86,7 +87,6 @@ var TSocket = {
   doSetHashTags: function(terms) { 
     console.log("sending terms ");
     console.log(terms);
-    $('#addterm').spinner('remove');
     if (this.object)
       this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
   }
