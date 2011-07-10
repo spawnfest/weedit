@@ -360,10 +360,12 @@ var LoadSearchTerm = {
   {
     console.log("IM HERE");
     console.log($('#searchterminput').val());
-    if ($('#searchterminput').val() != ""){
+    if ($('#searchterminput').val() != ''){
         AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
         $('#mask, .window').hide();
         $('#searchterminput').val('');        
+        $('#searchterminput').unbind('keyup');
+        $('.window .addnewterm').unbind('click');
     }else{
       $(id).effect( 'shake', {}, 100);
     }
