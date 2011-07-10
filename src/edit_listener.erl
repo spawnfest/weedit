@@ -79,20 +79,17 @@ code_change(_OldVsn, State, _Extra) ->
 
 %% @private
 -spec handle_request(atom(), [string()], term()) -> term().
-
-% index
 handle_request('GET', [], Req) ->
-  {ok,Document} = Req:file(filename:join(["www","index.html"]));
+  Req:file(filename:join(["www","index.html"]));
 
-% new doc auto
 handle_request('GET', ["new"], Req) ->
-  {ok,Document} = edit_document:create(),
-  Req:raw_headers_respond(302, "Location: /doc/" ++ Document ++ [13,10], "Type this!");
+  {ok, DocId} = edit_db:create_document(),
+  Req:raw_headers_respond(302, "Location: /doc/" ++ DocId ++ [13,10], "Type this!");
 
-%% all documents - rendered with title and body to the latest version
-
-handle_request('GET', [ "doc", DocId] , Req) ->
-  ?INFO("RENDERING DOC ~p ~n",[DocId]),
+%% all documents - rendered with title, tags and body to the latest version
+handle_request('GET', ["doc", DocId] , Req) ->
+  ?INFO("RENDERING DOC ~p ~n", [DocId]),
+  {ok, _Pid} = edit_document:ensure_started(DocId),
   Document = edit_document:document(DocId),
   Mustaches = dict:from_list([{title,     binary_to_list(Document#edit_document.title)},
                               {body,      binary_to_list(Document#edit_document.body)},

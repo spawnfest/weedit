@@ -196,14 +196,22 @@ var RefreshClientList = {
 			if ($("#" + username).length == 0){			
         var imageurl  = '';
 
-        $.getJSON("http://api.twitter.com/1/users/show.json?screen_name=" + username,
-          function(data) {
-            $.each(data, function(key, val) {
-              if (key == 'profile_image_url') {
-                imageurl  = val;
-              }
-            });
+        $.ajax({
+          url: "http://api.twitter.com/1/users/show.json?screen_name=" + username,
+          dataType: "jsonp",
+          jsonpCallback: "parseTwitter"
+        });
+
+        function parseTwitter(data) {
+          console.log(data);
+          console.log("from twitter");
+          $.each(data, function(key, val) {
+            if (key == 'profile_image_url') {
+              imageurl  = val;
+              console.log("Value is " + imageurl);
+            }
           });
+        };
 
         if(imageurl == '') {
           imageurl  = "images/twitter_logo.png";

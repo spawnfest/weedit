@@ -24,41 +24,32 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -spec start_link() -> {ok, pid()}.
 start_link() ->
-  pg2:create(?MODULE),
-  Pid =
-    case itweep:start_link({local, ?MODULE}, ?MODULE, [],
-                           [{user, edit_util:get_env(twitter_stream_user)},
-                            {password, edit_util:get_env(twitter_stream_password)}]) of
-      {ok, P} -> P;
-      {error, {already_started, P}} -> P
-    end,
-  ok = pg2:join(?MODULE, Pid),
-  {ok, Pid}.
+  case itweep:start_link({local, ?MODULE}, ?MODULE, [],
+                         [{user, edit_util:get_env(twitter_stream_user)},
+                          {password, edit_util:get_env(twitter_stream_password)}]) of
+    {ok, Pid} -> {ok, Pid};
+    {error, {already_started, Pid}} -> {ok, Pid}
+  end.
 
 -spec stop() -> ok.
 stop() ->
-  itweep:call(closest_member(), stop).
+  itweep:call(?MODULE, stop).
 
 -spec add_document(#edit_document{}) -> ok.
 add_document(Document) ->
-  itweep:call(closest_member(), {add, Document}, infinity).
+  itweep:call(?MODULE, {add, Document}, infinity).
 
 -spec update_document(#edit_document{}) -> ok.
 update_document(Document) ->
-  itweep:call(closest_member(), {update, Document}, infinity).
+  itweep:call(?MODULE, {update, Document}, infinity).
 
 -spec remove_document(document_id()) -> ok.
 remove_document(DocId) ->
-  itweep:call(closest_member(), {remove, DocId}, infinity).
+  itweep:call(?MODULE, {remove, DocId}, infinity).
 
 -spec event_dispatcher() -> pid() | undefined.
 event_dispatcher() ->
-  case closest_member() of
-    ?MODULE ->
-      erlang:whereis(?DISPATCHER);
-    Pid ->
-      rpc:call(node(Pid), erlang, whereis, [edit_itweep_dispatcher])
-  end.
+  erlang:whereis(?DISPATCHER).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% ITWEEP FUNCTIONS
@@ -151,14 +142,6 @@ terminate(Reason, _State) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PRIVATE FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-closest_member() ->
-  case pg2:get_closest_pid(?MODULE) of
-    Pid when is_pid(Pid) -> Pid;
-    Error ->
-      ?WARN("Couldn't find ~p's closest member on pg2: ~p~n\tDefaulting to the local instance...~n", [?MODULE, Error]),
-      ?MODULE
-  end.
-
 method([]) ->
   rest;
 method(Documents) ->

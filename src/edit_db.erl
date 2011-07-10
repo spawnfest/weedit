@@ -1,41 +1,35 @@
+%%%-------------------------------------------------------------------
+%%% @author Fernando Benavides <fernando.benavides@inakanetworks.com>
+%%% @copyright (C) 2010 Inaka Networks S.R.L.
+%%% @doc WeEdit db
+%%% @end
+%%%-------------------------------------------------------------------
 -module(edit_db).
+-author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
+-author('C B DePue <chad@inakanetworks.com>').
+
 -behaviour(gen_server).
 
--include("edit_records.hrl").
 -include("elog.hrl").
+-include("edit_records.hrl").
 
--define(DOC_TABLE,edit_documents).
--define(URL_TABLE,edit_urls).
--define(USERS_TABLE,edit_users).
--define(VERSIONS_TABLE,edit_versions).
-
-%% API layer for weedit
-
-%% ------------------------------------------------------------------
-%% API Function Exports
-%% ------------------------------------------------------------------
 -export([start_link/0]).
--export([document/1, create_document/1, create_document/0, add_version/3, add_tweet/2, set_hash_tags/2]).
-
-%% ------------------------------------------------------------------
-%% gen_server Function Exports
-%% ------------------------------------------------------------------
-
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
+-export([create_document/0, ensure_document/1, document/1]).
+-export([update/4]).
 
-%% ------------------------------------------------------------------
-%% API Function Definitions
-%% ------------------------------------------------------------------
-
+%%-------------------------------------------------------------------
+%% PUBLIC API
+%%-------------------------------------------------------------------
+-spec start_link() -> {ok, pid()} | {error, term()}.
 start_link() ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
-create_document() -> 
-  {ok,Name} = gen_server:call(?MODULE,create_document).
+create_document() ->
+  {ok, random_document_id()}.
 
-create_document(DocId) -> 
-  {ok,Name} = gen_server:call(?MODULE,{create_document, DocId}).
-
+ensure_document(DocId) ->
+  ok.
 
 document(DocId) -> 
   {ok, #edit_document{id = DocId}}.
@@ -44,24 +38,22 @@ set_hash_tags(DocId, HashTags) ->
   ok.
 
 %% TODO:SPEC
-add_version(Document,User,Patch) -> 
-  ?INFO("db: add version: ~p ~n",[Patch]),
-  gen_server:call(?MODULE,{add_version,Document,User,Patch}).
-
-add_tweet(DocId, Tweet) ->
-  gen_server:cast(?MODULE, {add_tweet, DocId, Tweet}).
+update(Document, User, Type, Patch) -> 
+  ?INFO("db: ~p to ~s:~n\t~p ~n", [Type, Document#edit_document.id, Patch]),
+  ok.
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
-
 init(Args) ->
-  init_schema(),
+  _ = random:seed(erlang:now()),
   {ok, Args}.
 
 handle_call(create_document, _From, State) ->
-  Name = random_document_url(),
-  {reply, {ok, Name}, State};
+  DocId = random_document_id(),
+  {reply, ok, NewState} =
+      handle_call({create_document, DocId}, _From, State),
+  {reply, {ok, DocId}, NewState};
 
 handle_call({create_document, DocId}, _From, State) ->
   {reply, {ok, DocId}, State};
@@ -84,20 +76,12 @@ code_change(_OldVsn, State, _Extra) ->
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
-init_schema() -> 
-  ets:new(?URL_TABLE,[protected,set,named_table]),
-  ets:new(?DOC_TABLE,[protected,set,named_table]),
-  ets:new(?USERS_TABLE,[protected,set,named_table]),
-  ets:new(?VERSIONS_TABLE,[protected,set,named_table]).
-
-random_document_url() -> 
-  _ = random:seed(erlang:now()),
-  Name = edit_util:random_url(),
-  case ets:member(?URL_TABLE,{Name}) of 
-    true  -> random_document_url();
-    false -> 
-      ets:insert(?URL_TABLE,{Name}),
-      Name
+random_document_id() -> 
+  DocId = edit_util:random_id(),
+  case reserved(DocId) of 
+    true  -> random_document_id();
+    false -> reserve(DocId), DocId
   end.
 
-
+reserved(DocId) -> false.
+reserve(DocId) -> ok.
