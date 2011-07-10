@@ -123,6 +123,19 @@ handle_request('GET', [ "d", "stylesheets" |  Path] , Req) ->
   File = filename:join(["www/stylesheets" | Path]),
   Req:file(File);
 
+%% ok read only hack for the same thing above. no time to fix properly before midnight..
+
+handle_request('GET', [ "r", "images" | Path] , Req) ->
+  File = filename:join(["www/images" | Path]),
+  Req:file(File);
+
+handle_request('GET', [ "r", "js" | Path] , Req) ->
+  File = filename:join(["www/js" | Path]),
+  Req:file(File);
+
+handle_request('GET', [ "r", "stylesheets" |  Path] , Req) ->
+  File = filename:join(["www/stylesheets" | Path]),
+ 
 %% Handle everything else
 
 handle_request('GET', Path, Req) ->
