@@ -250,7 +250,7 @@ var AddHashTerm = {
 		var terms = new Array();
 		$("#searchterms > div").each(function(index, domEle) {
 			console.log($(this).text());
-			terms.push($(this).text());
+			terms.push($(this).text().replace(/^#/,''));
 		});
 		
     terms.push(term);
