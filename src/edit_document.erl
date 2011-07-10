@@ -12,7 +12,7 @@
 
 -behaviour(gen_server).
 
--export([create/0, start_link/1]).
+-export([create/0, create/1, start_link/1]).
 -export([event_dispatcher/1, process_name/1, stop/1]).
 -export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -34,6 +34,12 @@
 -spec create() -> {ok, document_id()}.
 create() ->
   {ok, DocId} = edit_db:create_document(),
+  {ok, _Pid} = edit_doc_sup:start_doc(DocId),
+  {ok, DocId}.
+
+-spec create(string()) -> {ok, document_id()}.
+create(DocId) ->
+  {ok, DocId} = edit_db:create_document(DocId),
   {ok, _Pid} = edit_doc_sup:start_doc(DocId),
   {ok, DocId}.
 
@@ -78,7 +84,13 @@ stop(DocId) ->
 
 -spec document(document_id()) -> #edit_document{}.
 document(DocId) ->
-  gen_server:call(process_name(DocId), document).
+  Doc = (catch gen_server:call(process_name(DocId), document)),
+  case Doc of
+    {'EXIT', {noproc, _ }} -> 
+      edit_document:create(DocId),
+      document(DocId);
+    Reply -> Reply
+  end.
 
 -spec edit_title(document_id(), term(), diff()) -> ok.
 edit_title(DocId, Token, Diff) ->
@@ -152,6 +164,8 @@ handle_cast({set_hash_tags, HashTags, Token}, State) ->
   gen_event:notify(event_dispatcher(DocId, local),
           {outbound_message, <<"set_hash_tags">>, [{<<"tags">>,HashTags}], Token}),
   {noreply, State#state{document = NewDocument}};
+
+%% save versions of title
 handle_cast({edit_title, Diff, Token}, State) ->
   #edit_document{id = DocId, title = Title} = State#state.document,
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Title)},
@@ -160,6 +174,8 @@ handle_cast({edit_title, Diff, Token}, State) ->
   gen_event:notify(event_dispatcher(DocId, local),
           {outbound_message, <<"edit_title">>, [{<<"diff">>,Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
+
+%% save versions of body
 handle_cast({edit_body, Diff, Token}, State) ->
   #edit_document{id = DocId, body = Body} = State#state.document,
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body)},
@@ -167,6 +183,8 @@ handle_cast({edit_body, Diff, Token}, State) ->
   gen_event:notify(event_dispatcher(DocId, local),
     {outbound_message, <<"edit_body">>, [{<<"diff">>,Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
+
+%% save login of a user
 handle_cast({login, User, Token}, State) ->
   #edit_document{id = DocId, users = Users} = State#state.document,
   NewUsers = lists:keystore(User#edit_user.id, #edit_user.id, Users, User),

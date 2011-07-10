@@ -30,7 +30,7 @@ handle_command(ClientPid, <<"edit_title">>, DocId, Data) ->
   edit_document:edit_title(DocId,ClientPid,TitleDiff),
   noreply;
  
-handle_command(ClientPid, <<"body">>, DocId, Data) -> 
+handle_command(ClientPid, <<"edit_body">>, DocId, Data) -> 
   DocDiff = edit_util:safe_term_to_binary(proplists:get_value(<<"diff">>, Data, <<>>)),
   ?INFO("got diff of document: ~p ~n",[DocDiff]),
   edit_document:edit_body(DocId,ClientPid,DocDiff),
