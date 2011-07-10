@@ -66,7 +66,7 @@ handle_command(_ClientPid, <<"login">>, DocId, Data) ->
         {Id, Username} ->
           #edit_user{id = Id, username = Username}
       end,
-  ?INFO("~s logged in to ~s~n", [User, DocId]),
+  ?INFO("~s logged in to ~s~n", [User#edit_user.username, DocId]),
   edit_document:login(DocId, i_want_my_message_back, User),
   noreply;
 handle_command(_ClientPid, <<"set_hash_tags">>, DocId, Data) -> 
