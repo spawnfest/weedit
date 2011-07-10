@@ -42,7 +42,7 @@ document(DocId) ->
 
 -spec update(#edit_document{}, binary(), atom(), term()) -> ok.
 update(Document, User, Type, Patch) -> 
-  ?INFO("db: ~p to ~s:~n\t~p ~n", [Type, Document#edit_document.id, Patch]),
+  ?INFO("db: ~p to ~s~n", [Type, Document#edit_document.id]),
   gen_server:cast(?MODULE, {update, Document, User, Type, Patch}).
 
 %% ------------------------------------------------------------------
