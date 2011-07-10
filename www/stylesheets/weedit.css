@@ -11,6 +11,10 @@ hr {
 	height:.1em;
 }
 
+#homepagemenu td {
+	color:white;
+}
+
 #mask {
   position:absolute;
   left:0;
