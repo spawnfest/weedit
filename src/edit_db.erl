@@ -99,7 +99,11 @@ handle_call({document, DocId}, _From, State) ->
                                       users = lists:map(
                                                 fun(UserJsonObj) ->
                                                         #edit_user{id = itweet_mochijson2:get_value(<<"id">>, UserJsonObj),
-                                                                   username = itweet_mochijson2:get_value(<<"username">>, JsonObj)}
+                                                                   username =
+                                                                       case itweet_mochijson2:get_value(<<"username">>, UserJsonObj, null) of
+                                                                         null -> undefined;
+                                                                         UN -> UN
+                                                                       end}
                                                 end, itweet_mochijson2:get_value(<<"users">>, JsonObj, []))
                                      },
             {reply, {ok, Document}, State}
