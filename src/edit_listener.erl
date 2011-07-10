@@ -97,6 +97,17 @@ handle_request('GET', ["d", DocId] , Req) ->
   {ok, FileData} = file:read_file(filename:join(["www","document.html"])),
   Req:ok(mustache:render(FileData,Mustaches));
 
+%% read only documents - rendered with title, tags and body to the latest version
+handle_request('GET', ["r", DocId] , Req) ->
+  RDoc = DocId ++ "_ro",
+  ?INFO("RENDERING READ ONLY DOC ~p ~n", [RDoc]),
+  Document = edit_document:document(RDoc),
+  Mustaches = dict:from_list([{title,     binary_to_list(Document#edit_document.title)},
+                              {body,      binary_to_list(Document#edit_document.body)},
+                              {hash_tags, Document#edit_document.hash_tags}]),
+  {ok, FileData} = file:read_file(filename:join(["www","read_only_document.html"])),
+  Req:ok(mustache:render(FileData,Mustaches));
+
 %% these are only here because matt and manuel are self hosting and can't properly path the files..
 %% remove when they self host
 
@@ -112,6 +123,20 @@ handle_request('GET', [ "d", "stylesheets" |  Path] , Req) ->
   File = filename:join(["www/stylesheets" | Path]),
   Req:file(File);
 
+%% ok read only hack for the same thing above. no time to fix properly before midnight..
+
+handle_request('GET', [ "r", "images" | Path] , Req) ->
+  File = filename:join(["www/images" | Path]),
+  Req:file(File);
+
+handle_request('GET', [ "r", "js" | Path] , Req) ->
+  File = filename:join(["www/js" | Path]),
+  Req:file(File);
+
+handle_request('GET', [ "r", "stylesheets" |  Path] , Req) ->
+  File = filename:join(["www/stylesheets" | Path]),
+  Req:file(File);
+ 
 %% Handle everything else
 
 handle_request('GET', Path, Req) ->
