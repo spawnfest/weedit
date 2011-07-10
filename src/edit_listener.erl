@@ -115,4 +115,5 @@ handle_request('GET', [ "doc", "stylesheets" |  Path] , Req) ->
 %% Handle everything else
 
 handle_request('GET', Path, Req) ->
+  ?INFO("got request for ~p ~n",[Path]),
   Req:file(filename:join(["www"| Path])).
