@@ -237,9 +237,9 @@ var AddTweet = {
       img   = tweet.user.profile_image_url;
 
       console.log(tweet);
-		  if (tweet.text.length >= 100) {
+		  if (tweet.text.length >= 88) {
         url   = '<a href="http://twitter.com/#!/' + tweet.user.screen_name + '" target="_blank">...</a>';
-  		  text	= tweet.text.substring(0,100) + ' ' + url;
+  		  text	= tweet.text.substring(0,88) + ' ' + url;
 	  	} else {
 		 		text	= tweet.text;				
 		  }

@@ -86,7 +86,10 @@ to_jsx(#edit_user{id = Id, username = Name}) ->
 
 -spec to_mochi(term()) -> itweet_mochijson2:json_object().
 to_mochi(#edit_user{id = Id, username = Name}) ->
-  {[{<<"id">>, Id}, {<<"username">>, Name}]};
+  {[{<<"id">>, Id}, {<<"username">>, case Name of
+                                       undefined -> null;
+                                       Name -> Name
+                                     end}]};
 to_mochi(#edit_document{body = Body, hash_tags = HashTags, id = Id, users = Users, title = Title}) ->
   {[{<<"id">>,        edit_util:safe_term_to_binary(Id)},
     {<<"title">>,     Title},

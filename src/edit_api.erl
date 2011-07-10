@@ -21,7 +21,14 @@
 handle_command(ClientPid, <<"hello">>, DocId, _Data) -> %% required so that we can subscribe to events for this document
   ?INFO("got hello from ~p ~n",[DocId]),
   gen_event:add_sup_handler(edit_document:event_dispatcher(DocId), edit_client_handler, [ClientPid]),
-  edit_document:hello(DocId,ClientPid),
+  #edit_document{users = Users} = edit_document:document(DocId),
+  ?INFO("sending users to the new guy: ~p ~n",[Users]),
+  socketio_client:send(ClientPid,
+                       #msg{json = true,
+                            content = [{<<"error">>, false},
+                                       {<<"action">>,<<"set_users">>},
+                                       {<<"users">>, lists:map(fun edit_util:to_jsx/1, Users)}
+                                      ]}),
   noreply;
 handle_command(_ClientPid, <<"login">>, DocId, Data) ->
   ?INFO("wow in login: ~p ~p ~n",[DocId,Data]),
