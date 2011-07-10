@@ -6,7 +6,6 @@
 -record(edit_document, {id              :: document_id(),
                         title = <<"">>  :: binary(),
                         body = <<"">>   :: binary(),
-                        owner           :: #edit_user{},
                         users = []      :: [#edit_user{}],
                         hash_tags = []  :: [binary()]}).
 -record(edit_dv, {document :: document_id(),

@@ -136,7 +136,7 @@ handle_call(stop, _From, State) ->
 -spec handle_cast(term(), state()) -> {noreply, state()}.
 handle_cast({add_tweet, Tweet}, State) ->
   #edit_document{id = DocId} = State#state.document,
-  ok = edit_db:update(State#state.document, undefined, tweet, Tweet),
+  ok = edit_db:update(State#state.document, tweet, Tweet),
   gen_event:notify(event_dispatcher(DocId, local),
     {outbound_message, <<"tweet">>, [{<<"tweet">>,edit_util:mochi_to_jsx(Tweet)}], undefined}),
   {noreply, State};
@@ -145,7 +145,7 @@ handle_cast({add_tweet, Tweet}, State) ->
 handle_cast({set_hash_tags, HashTags, Token}, State) ->
   #edit_document{id = DocId} = State#state.document,
   NewDocument = State#state.document#edit_document{hash_tags = HashTags},
-  ok = edit_db:update(NewDocument, Token, hashtags, HashTags),
+  ok = edit_db:update(NewDocument, hashtags, HashTags),
   ok = edit_itweep:update_document(NewDocument),
   edit_document_handler:unsubscribe(DocId),
   try edit_document_handler:subscribe(NewDocument)
@@ -161,7 +161,7 @@ handle_cast({set_hash_tags, HashTags, Token}, State) ->
 handle_cast({edit_title, Diff, Token}, State) ->
   #edit_document{id = DocId, title = Title} = State#state.document,
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Title, State#state.js_context)},
-  ok = edit_db:update(NewDocument, Token, edit_title, Diff),
+  ok = edit_db:update(NewDocument, edit_title, Diff),
   ?INFO("in edit_title diff: ~p, title: ~p, docid: ~p ~n",[Diff,Title,DocId]),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"edit_title">>, [{<<"diff">>, Diff}], Token}),
@@ -171,7 +171,7 @@ handle_cast({edit_title, Diff, Token}, State) ->
 handle_cast({edit_body, Diff, Token}, State) ->
   #edit_document{id = DocId, body = Body} = State#state.document,
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Body, State#state.js_context)},
-  ok = edit_db:update(NewDocument, Token, edit_body, Diff),
+  ok = edit_db:update(NewDocument, edit_body, Diff),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"edit_body">>, [{<<"diff">>, Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
@@ -182,7 +182,7 @@ handle_cast({login, User, Token}, State) ->
   NewUsers = lists:keystore(User#edit_user.username, #edit_user.username, Users, User),
   NewDocument = State#state.document#edit_document{users = NewUsers},
   ?INFO("New users are : ~p ~n",[NewUsers]),
-  ok = edit_db:update(NewDocument, Token, login, User),
+  ok = edit_db:update(NewDocument, login, edit_util:to_mochi(User)),
   ok = edit_itweep:update_document(NewDocument),
   edit_document_handler:unsubscribe(DocId),
   try edit_document_handler:subscribe(NewDocument)

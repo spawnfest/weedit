@@ -10,8 +10,8 @@
 -include("elog.hrl").
 -include("edit_records.hrl").
 
--export([get_env/1, set_env/2, random_id/0, safe_term_to_binary/1, to_lower/1]).
--export([mochi_to_jsx/1, to_jsx/1]).
+-export([get_env/1, set_env/2, random_id/0, safe_term_to_binary/1, to_lower/1, now/0]).
+-export([mochi_to_jsx/1, to_jsx/1, to_mochi/1]).
 
 %% @doc Returns application:get_env(edit, Field) or its default value
 -spec get_env(atom()) -> term().
@@ -29,6 +29,9 @@ get_env(Field) ->
 %% @private
 -spec get_env_default(atom()) -> term().
 get_env_default(socketio_port_range) -> {12001, 12001};
+get_env_default(riak_server) -> "127.0.0.1";
+get_env_default(riak_port) -> 8087;
+get_env_default(riak_bucket_prefix) -> <<"edit-">>;
 get_env_default(Field) ->
   throw({env_undefined, Field}).
 
@@ -80,3 +83,20 @@ mochi_to_jsx(Object) ->
 -spec to_jsx(term()) -> jsx:eep0018().
 to_jsx(#edit_user{id = Id, username = Name}) ->
   [{<<"id">>, Id}, {<<"username">>, Name}].
+
+-spec to_mochi(term()) -> itweet_mochijson2:json_object().
+to_mochi(#edit_user{id = Id, username = Name}) ->
+  {[{<<"id">>, Id}, {<<"username">>, Name}]};
+to_mochi(#edit_document{body = Body, hash_tags = HashTags, id = Id, users = Users, title = Title}) ->
+  {[{<<"id">>,        edit_util:safe_term_to_binary(Id)},
+    {<<"title">>,     Title},
+    {<<"body">>,      Body},
+    {<<"hash-tags">>, HashTags},
+    {<<"users">>,     lists:map(fun to_mochi/1, Users)}]}.
+
+-spec now() -> integer().
+now() ->
+  {_, _, MicroSecs} = erlang:now(),
+  Millis = erlang:trunc(MicroSecs/1000),
+  calendar:datetime_to_gregorian_seconds(
+    calendar:universal_time()) * 1000 + Millis.
