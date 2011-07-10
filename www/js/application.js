@@ -416,7 +416,7 @@ var LoadSearchTerm = {
 
 var LoadTweetBox = {
 	init: function() {
-		twttr.anywhere(function (T) {
+		twttr.anywhere("1",function (T) {
 		
 			T("#tbox").tweetBox({
 				label: "Thoughts?",
