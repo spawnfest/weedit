@@ -76,12 +76,12 @@ var TSocket = {
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":JSON.stringify(diff)});
+    this.object.send({"doc_id":this.doc_id,"action":"edit_title","diff":$.base64.encode(JSON.stringify(diff))});
   },
   doSetDoc: function(diff) { 
     console.log(diff); 
     if (this.object)
-      this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
+      this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":$.base64.encode(JSON.stringify(diff))});
   },
   doSetHashTags: function(terms) { 
     console.log("sending terms ");
@@ -266,10 +266,9 @@ var AddTweet = {
     }
 						
 		if($("#tweets > div").size() == 5) {
-			$('#tweets').find('div').first().fadeOut(500).remove();
-			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="'+ img + '">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="'+ img + '">' + text + '</div></div><hr id="'+this+'">').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 		} else {
-			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="' + img + '">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="' + img + '">' + text + '</div></div><hr id="'+this+'">').hide().appendTo('#tweets').delay(500).fadeIn(1000);
 		}
 	}
 }
@@ -442,16 +441,15 @@ var LoadSearchTerm = {
 
 var LoadTweetBox = {
 	init: function() {
-    $(".tweet-this a").tweetIt();
-		//twttr.anywhere("1",function (T) {
+		twttr.anywhere("1",function (T) {
 		
-		//	T("#tbox").tweetBox({
-		//		label: "Thoughts?",
-		//  		height: 50,
-		//  		width: 190,
-		//  		defaultContent: "<Type Socially!>"
-		//	});
-		//});
+			T("#tbox").tweetBox({
+				label: "Thoughts?",
+		  		height: 50,
+		  		width: 190,
+		  		defaultContent: "<Type Socially!>"
+			});
+		});
 	}
 }
 
