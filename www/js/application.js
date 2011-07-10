@@ -58,11 +58,14 @@ var TSocket = {
           console.log("receive a tweet list");
           AddTweet.load(data.tweet);
           break;
+        case 'set_users':
+          console.log(data.users);
+          RefreshClientList.load(data.users);
+          break;
         default:
           console.log("I don't know this action" + data);
       }
     });
-
   },
   doHello: function(){
     this.object.send({"doc_id":this.doc_id,"action":"hello"});
@@ -77,12 +80,14 @@ var TSocket = {
   },
   doSetDoc: function(diff) { 
     console.log(diff); 
-    this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
+    if (this.object)
+      this.object.send({"doc_id":this.doc_id,"action":"edit_body","diff":JSON.stringify(diff)});
   },
   doSetHashTags: function(terms) { 
     console.log("sending terms ");
     console.log(terms);
-    this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
+    if (this.object)
+      this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
   }
 }
 
@@ -183,13 +188,28 @@ var TypeSocial = {
 }
 
 var RefreshClientList = {
-	//TODO: Parse JSON
-	load: function() {
-		var users=["Chad","Fernando","Manuel","Matt", "Matt","Chad"];
-	
-		jQuery.each(users, function() {
-			if ($("#" + this).length == 0){			
-				$('#userlist').append('<div class="twitteritem" id="' + this + '"><img id="twitter_avatar" src="images/twitter_logo.png"><span id="handle">' + this + '</span></div>')
+	load: function(users) {		
+		$.each(users, function() {
+      var username  = this.username;
+
+
+			if ($("#" + username).length == 0){			
+        var imageurl  = '';
+
+        $.getJSON("http://api.twitter.com/1/users/show.json?screen_name=" + username,
+          function(data) {
+            $.each(data, function(key, val) {
+              if (key == 'profile_image_url') {
+                imageurl  = val;
+              }
+            });
+          });
+
+        if(imageurl == '') {
+          imageurl  = "images/twitter_logo.png";
+        }
+
+  			$('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
 			}
 		});
 	}
@@ -221,6 +241,7 @@ var AddHashTerm = {
 		var terms=[];
 	},
 	add: function(term) {
+
 			
 		if($("#searchterms").size() == 10) {
 			$('#addterm').remove();
@@ -240,13 +261,10 @@ var AddHashTerm = {
 	},
 	loadlist: function(jsonlist) {		
     console.log(jsonlist);
-    $('#searchterms').remove("div");
-    $.each(jsonlist, function(){
-  	  sanitizedterm		= "#" + term;
-
-		  if ($(sanitizedterm).length == 0) {
-			  $('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
-		  }  
+    $('#searchterms').children().remove("div");
+    $.each(jsonlist, function(i,val){
+  	  sanitizedterm		= "#" + val;
+			$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
     });
 	
 	
@@ -357,10 +375,14 @@ var LoadSearchTerm = {
 	},
   SubmitTerm: function(id)
   {
-    if ($('#searchterminput').val() != ""){
+    console.log("IM HERE");
+    console.log($('#searchterminput').val());
+    if ($('#searchterminput').val() != ''){
         AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
         $('#mask, .window').hide();
         $('#searchterminput').val('');        
+        $('#searchterminput').unbind('keyup');
+        $('.window .addnewterm').unbind('click');
     }else{
       $(id).effect( 'shake', {}, 100);
     }
@@ -386,8 +408,6 @@ var LoadTweetBox = {
 $(document).ready(function(){
 
   TypeSocial.init();
-  RefreshClientList.load();
-  RefreshTweetList.load();  
   LoadTweetBox.init();
   AddHashTerm.init();
 
@@ -407,7 +427,7 @@ $(document).ready(function(){
             console.log(error);
         }
 	    } else {  
-	    	//LoginBox.init();
+	    	LoginBox.init();
 	    }  
 	});
 
