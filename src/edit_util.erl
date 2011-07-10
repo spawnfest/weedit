@@ -82,7 +82,10 @@ mochi_to_jsx(Object) ->
 
 -spec to_jsx(term()) -> jsx:eep0018().
 to_jsx(#edit_user{id = Id, username = Name}) ->
-  [{<<"id">>, Id}, {<<"username">>, Name}].
+  [{<<"id">>, Id}, {<<"username">>, case Name of
+                                      undefined -> null;
+                                      Name -> Name
+                                    end}].
 
 -spec to_mochi(term()) -> itweet_mochijson2:json_object().
 to_mochi(#edit_user{id = Id, username = Name}) ->
