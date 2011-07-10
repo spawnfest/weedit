@@ -374,12 +374,8 @@ $(document).ready(function(){
   AddHashTerm.init();
   
   twttr.anywhere(function(twitter) {  
-<<<<<<< HEAD
-	    if(!twitter.isConnected()){  
-        try {
-=======
 	    if(twitter.isConnected()){  
->>>>>>> 8578adbaa7c4295193dab5c016a73ea15fd39fdf
+        try {
 	        twitteruser		= twitter.currentUser.data('screen_name');
 	        twitterimgurl	= twitter.currentUser.data('profile_image_url');
 	        console.log("User " + twitteruser + " is logged in");
