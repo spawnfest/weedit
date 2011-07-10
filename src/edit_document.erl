@@ -158,7 +158,6 @@ handle_cast({edit_title, Diff, Token}, State) ->
   #edit_document{id = DocId, title = Title} = State#state.document,
   NewDocument = State#state.document#edit_document{title = apply_diff(Diff, Title, State#state.js_context)},
   ok = edit_db:update(NewDocument, edit_title, Diff),
-  ?INFO("in edit_title diff: ~p, title: ~p, docid: ~p ~n",[Diff,Title,DocId]),
   gen_event:notify(event_dispatcher(DocId, local),
                    {outbound_message, <<"edit_title">>, [{<<"diff">>, Diff}], Token}),
   {noreply, State#state{document = NewDocument}};
@@ -177,7 +176,6 @@ handle_cast({login, User, Token}, State) ->
   #edit_document{id = DocId, users = Users} = State#state.document,
   NewUsers = lists:keystore(User#edit_user.username, #edit_user.username, Users, User),
   NewDocument = State#state.document#edit_document{users = NewUsers},
-  ?INFO("New users are : ~p ~n",[NewUsers]),
   ok = edit_db:update(NewDocument, login, edit_util:to_mochi(User)),
   ok = edit_itweep:update_document(NewDocument),
   edit_document_handler:unsubscribe(DocId),
@@ -233,10 +231,8 @@ init_js() ->
   JS.
 
 apply_diff(Diff, Something, JS) ->
-  ?INFO("apply_diff(~p, ~p, ~p)~n", [Diff, Something, JS]),
   case js:call(JS, <<"apply_diff">>, [Something, Diff]) of
     {ok, Result} ->
-      ?INFO("~p~n", [Result]),
       Result;
     {error, Reason} ->
       ?THROW("Couldn't apply diff(~p, ~p, ~p): ~p~n", [Diff, Something, JS, Reason]),

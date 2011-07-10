@@ -32,6 +32,8 @@ get_env_default(socketio_port_range) -> {12001, 12001};
 get_env_default(riak_server) -> "127.0.0.1";
 get_env_default(riak_port) -> 8087;
 get_env_default(riak_bucket_prefix) -> <<"edit-">>;
+get_env_default(initial_title) -> <<>>;
+get_env_default(initial_body) -> <<>>;
 get_env_default(Field) ->
   throw({env_undefined, Field}).
 
