@@ -225,6 +225,7 @@ var TypeSocial = {
 
 var RefreshClientList = {
 	load: function(users) {
+		console.log(users);
 	  	var userlist	= '';
 		$.each(users, function() {
 			var user  = this.username;
