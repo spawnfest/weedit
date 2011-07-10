@@ -19,7 +19,10 @@
 %% @private
 -spec handle_command(pid(), binary(), string(), [proplists:property()]) -> noreply.
 handle_command(ClientPid, <<"hello">>, DocId, _Data) -> %% required so that we can subscribe to events for this document
-  gen_event:add_sup_handler(edit_document:event_dispatcher(DocId), edit_client_handler, [ClientPid]),
+  ?INFO("got hello from ~p ~n",[DocId]),
+  BinaryPid = list_to_binary(pid_to_list(ClientPid)),
+  gen_event:add_sup_handler(edit_document:event_dispatcher(DocId), edit_client_handler, [BinaryPid]),
+  edit_document:hello(DocId,ClientPid),
   noreply;
 handle_command(_ClientPid, <<"login">>, DocId, Data) ->
   ?INFO("wow in login: ~p ~p ~n",[DocId,Data]),
@@ -39,14 +42,16 @@ handle_command(_ClientPid, <<"set_hash_tags">>, DocId, Data) ->
   edit_document:set_hash_tags(DocId, i_want_my_message_back, HashTags),
   noreply;
 handle_command(ClientPid, <<"edit_title">>, DocId, Data) -> 
+  BinaryPid = list_to_binary(pid_to_list(ClientPid)),
   TitleDiffText = proplists:get_value(<<"diff">>, Data, <<>>),
   TitleDiff = itweet_mochijson2:decode(TitleDiffText),
   ?INFO("got title diff: ~p ~n",[TitleDiff]),
-  edit_document:edit_title(DocId,ClientPid,TitleDiff),
+  edit_document:edit_title(DocId,BinaryPid,TitleDiff),
   noreply;
 handle_command(ClientPid, <<"edit_body">>, DocId, Data) -> 
+  BinaryPid = list_to_binary(pid_to_list(ClientPid)),
   DocDiffText = proplists:get_value(<<"diff">>, Data, <<>>),
   DocDiff = itweet_mochijson2:decode(DocDiffText),
   ?INFO("got diff of document: ~p ~n",[DocDiff]),
-  edit_document:edit_body(DocId,ClientPid,DocDiff),
+  edit_document:edit_body(DocId,BinaryPid,DocDiff),
   noreply.

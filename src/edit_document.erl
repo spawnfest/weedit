@@ -17,7 +17,7 @@
 -export([add_tweet/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 -export([document/1]).
--export([set_hash_tags/3, edit_title/3, edit_body/3, login/3]).
+-export([set_hash_tags/3, edit_title/3, edit_body/3, login/3, hello/2]).
 
 -include("elog.hrl").
 -include("socketio.hrl").
@@ -90,6 +90,10 @@ edit_body(DocId, Token, Diff) ->
 -spec login(document_id(), term(), #edit_user{}) -> ok.
 login(DocId, Token, User) ->
   gen_server:cast(process_name(DocId), {login, User, Token}).
+
+-spec hello(document_id(), term()) -> ok.
+hello(DocId, Token) ->
+  gen_server:cast(process_name(DocId), {hello, Token}).
 
 %% ------------------------------------------------------------------
 %% Behaviour Callbacks

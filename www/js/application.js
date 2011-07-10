@@ -55,8 +55,7 @@ var TSocket = {
           AddHashTerm.loadlist(data.tags);
           break;
         case 'tweet':
-          console.log("receive a tweet list");
-          AddTweet.load(data.tweet);
+          AddTweet.load(data.tweet,'twitter');
           break;
         case 'set_users':
           console.log(data.users);
@@ -210,7 +209,7 @@ var RefreshClientList = {
             $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
           },
           error:function(jqXHR, textStatus, errorThrown) {
-            imageurl  = "images/twitter_logo.png";
+            imageurl  = "images/spawnfest_typewriter.jpeg";
             $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
           }
         });
@@ -220,23 +219,32 @@ var RefreshClientList = {
 }
 
 var AddTweet = {	
-	load: function(tweets) {
-		$.each(tweets, function() {		
-			var text	= '';
-			if (this.length >= 100) {
-				//TODO: Fix url
-				text	= this.substring(0,100) + ' <a href="#">...</a>';
-			} else {
-				text	= this;				
-			}
+	load: function(tweet,type) {
+    var text  = '';
+    var img   = '';
+
+    if (type == 'twitter') {
+  	  text	= '';
+      img   = tweet.user.profile_image_url;
+
+      console.log(tweet);
+		  if (tweet.entities.text.length >= 100) {
+        url   = '<a href="http://twitter.com/#!/' + tweet.user.screen_name + '" target="_blank">...</a>';
+  		  text	= tweet.entities.text.substring(0,100) + ' ' + url;
+	  	} else {
+		 		text	= tweet.entities.text;				
+		  }
+    } else {
+      text  = tweet;
+      img   = "images/spawnfest_typewriter.jpeg";
+    }
 						
-			if($("#tweets > div").size() == 5) {
-				$('#tweets').find('div').first().fadeOut(500).remove();
-				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
-			} else {
-				$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="images/twitter_logo.png">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
-			}
-		});
+		if($("#tweets > div").size() == 5) {
+			$('#tweets').find('div').first().fadeOut(500).remove();
+			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="'+ img + '">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+		} else {
+			$('<div><div class="tweet" id="' + this + '"><img id="twitter_avatar" align="left" src="' + img + '">' + text + '</div></div><hr>').hide().appendTo('#tweets').delay(500).fadeIn(1000);
+		}
 	}
 }
 
@@ -283,7 +291,7 @@ var AddHashTerm = {
 	
 	  search_arr.push(new_search);
 
-    AddTweet.load(search_arr);
+    AddTweet.load(search_arr,'terms');
 	}
 }
 
