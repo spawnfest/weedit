@@ -39,6 +39,12 @@ var TSocket = {
 
     this.object.on('connect', function(){
       console.log("We connected!!");
+
+
+      $('#addterm').spinner({ position: 'center', hide: true });
+
+      
+      
       TSocket.doHello();
     });
 
@@ -85,6 +91,7 @@ var TSocket = {
   doSetHashTags: function(terms) { 
     console.log("sending terms ");
     console.log(terms);
+    $('#addterm').spinner('remove');
     if (this.object)
       this.object.send({"doc_id":this.doc_id,"action":"set_hash_tags","tags":terms});
   }
@@ -133,13 +140,17 @@ var TypeSocial = {
     }
 
     //console.log("Checking doc...");
+    var content = "";
+    if (this.editor.tinymce()) { 
+      content = this.editor.timymce().getContent();
+    } else { content = this.editor.val(); }
 
-    if (this.editor_last_rev != this.editor.val()) {
+    if (this.editor_last_rev != content) {
       console.log("doc changed...");
       console.log(this.editor_last_rev);
-      console.log(this.editor.val());
-       diff = this.dmp.getDiff(this.editor_last_rev,this.editor.val());
-       this.editor_last_rev = this.editor.val();
+      console.log(content);
+       diff = this.dmp.getDiff(this.editor_last_rev,content);
+       this.editor_last_rev = content;
        this.socket.doSetDoc(diff);
     }
 
@@ -149,8 +160,15 @@ var TypeSocial = {
     this.title_last_rev = this.title.val();
   },
   setBody: function(diff) {
-    this.editor.val(this.dmp.applyPatch(this.editor.val(),diff));       
-    this.editor_last_rev = this.editor.val();
+    if (this.editor.tinymce()) { 
+      this.editor.tinymce().setContent(this.dmp.applyPatch(this.editor.tinymce().getContent(),diff));       
+      this.editor_last_rev = this.editor.tinymce().getContent();
+    } else { 
+      this.editor.val(this.dmp.applyPatch(this.editor.val(),diff));       
+      this.editor_last_rev = this.editor.val();
+    }
+
+
   },
   startInterval: function(interval){
     var instance = this;
@@ -161,16 +179,30 @@ var TypeSocial = {
   },
   init: function(ext_config) {
 
+    $('#addterm').spinner({position:'center',hide:true});
+
     // Create the editor and set the config vars
     if (ext_config) {this.config = config}
-    this.editor = $('#editor').ckeditor(this.onEditorReady,this.config); 
+
+    //this.editor = $('#editor').ckeditor(this.onEditorReady,this.config); 
+    $('#editor').tinymce({theme : "advanced", theme_advanced_buttons2 : "",
+              theme_advanced_buttons3 : "",
+              theme_advanced_toolbar_location : "top",
+              theme_advanced_toolbar_align : "left",
+              theme_advanced_statusbar_location : "",height : "480"});
+
+    this.editor = $('#editor');
 
     // Setting the title object and the value for the last revision
     // in case it comes from the server
     this.title = $('#document_title');
     this.title_last_rev = this.title.val();
 
-    this.editor_last_rev = this.editor.val();
+    if (this.editor.tinymce()) {
+      this.editor_last_rev = this.editor.tinymce().getContent();
+    }else{
+      this.editor_last_rev = this.editor.val();
+    }
 
     // Set up Diff Match Patch
     this.dmp.init();
