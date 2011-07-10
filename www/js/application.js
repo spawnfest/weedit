@@ -110,7 +110,7 @@ var TypeSocial = {
     });
   },
   checkDiffChanges: function () {
-    console.log("Checking title...");
+    //console.log("Checking title...");
 
     if (this.title_last_rev != this.title.val()) {
        diff = this.dmp.getDiff(this.title_last_rev,this.title.val());
@@ -118,7 +118,7 @@ var TypeSocial = {
        this.socket.doSetTitle(diff);
     }
 
-    console.log("Checking doc...");
+    //console.log("Checking doc...");
 
     if (this.editor_last_rev != this.editor.val()) {
        diff = this.dmp.getDiff(this.editor_last_rev,this.editor.val());
@@ -208,7 +208,7 @@ var RefreshTweetList = {
 
 var GetHashTerms = {
 	init: function() {
-		var terms=["#testing","#tweet","#typesocial","#allyourspawnarebelongtous"];
+		var terms=[];
 		
 		jQuery.each(terms, function() {
 			if($("#searchterms > div").size() < 10) {
@@ -224,7 +224,7 @@ var GetHashTerms = {
 
 var AddHashTerm = {
 	init: function() {
-		var terms=[{{hashtag_array}}];
+		var terms=[];
 		jQuery.each(terms, function() {
 			if($("#searchterms > div").size() < 10) {
 				$('<div><div class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
@@ -370,6 +370,10 @@ $(document).ready(function(){
   RefreshTweetList.load();  
   LoadTweetBox.init();
   AddHashTerm.init();
+
+  $('#addterm').click(function() {
+	  LoadSearchTerm.open();
+  });
   
   twttr.anywhere(function(twitter) {  
 	    if(twitter.isConnected()){  
@@ -382,7 +386,5 @@ $(document).ready(function(){
 	    }  
 	});
 
-  $('#addterm').click(function() {
-	  LoadSearchTerm.open();
-  });
+
 });
