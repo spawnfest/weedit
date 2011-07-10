@@ -224,35 +224,45 @@ var TypeSocial = {
 }
 
 var RefreshClientList = {
-	load: function(users) {		
+	load: function(users) {
+	  	var userlist	= '';
 		$.each(users, function() {
-      var username  = this.username;
+			var user  = this.username;
 
-      if ($("#"+username).length == 0) {
+			if ($("#"+user).length == 0) {
+				if (userlist == '') {
+					userlist	= user;
+				} else {
+					userlist += ',' + user;
+				}
+			}
+		});
 
         var imageurl  = '';
 
         $.ajax({
-          url: "http://api.twitter.com/1/users/show.json?screen_name=" + username,
-          dataType: "jsonp",
-          success:function(data,text,xhqr){
-            $.each(data, function(key, val) {
-              if (key == 'profile_image_url') {
-                imageurl  = val;
-                console.log("Value is " + imageurl);
-              }
-            });
-
-            $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
-          },
-          error:function(jqXHR, textStatus, errorThrown) {
-            imageurl  = "images/logo.png";
-            $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
-          }
+        	url: "http://api.twitter.com/1/users/lookup.json?screen_name=" + userlist,
+        	dataType: "jsonp",
+        	success:function(data,text,xhqr) {
+        		var username	= '';
+        		var imageurl	= '';
+        		$.each(data, function(key, val) {
+        			if (key == 'screen_name') {
+        				username	= val;
+        			} else if (key == 'profile_image_url') {
+        				imageurl  = val;
+        			}
+        		});
+        		
+        		if(username != '' && imageurl != '') {
+        			$('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
+        		}
+        	},	
+        	error:function(jqXHR, textStatus, errorThrown) {
+        		console.log("Error processing twitter user list " + textStatus);
+        	}
         });
-      }
-    });
-  }
+	}
 }
 
 var AddTweet = {	
@@ -285,9 +295,6 @@ var AddTweet = {
 }
 
 var AddHashTerm = {
-	init: function() {
-		var terms=[];
-	},
 	add: function(term) {
 
 			
@@ -316,7 +323,7 @@ var AddHashTerm = {
     $.each(jsonlist, function(i,val){
   	  sanitizedterm		= "#" + val;
 
-			$('<div id="'+ sanitizedterm + '" class="searchterm">' + sanitizedterm + '<div id="'+sanitizedterm+' class="remove" onclick="AddHashTerm.delete('+sanitizedterm+');"style="cursor: pointer;"><img id="delete" src="images/delete_icon.png"></div>"</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
+			$('<div id="'+ sanitizedterm + '" class="searchterm">' + sanitizedterm + ' <a id="'+sanitizedterm+'" href="#" onclick="javascript:$(this).parent().remove();"><img id="delete" src="images/delete_icon.png"></a></div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
 
       if (new_search == '') {
         new_search  = "New search term added.  Now searching on " + sanitizedterm;
@@ -468,7 +475,7 @@ var LoadTweetBox = {
 				label: "Thoughts?",
 		  		height: 50,
 		  		width: 190,
-		  		defaultContent: "<Type Socially!>"
+		  		defaultContent: "#typesocial " + location + " "
 			});
 		});
 	}
@@ -476,10 +483,8 @@ var LoadTweetBox = {
 
 
 $(document).ready(function(){
-
   TypeSocial.init();
   LoadTweetBox.init();
-  AddHashTerm.init();
 
   $('#addterm').click(function() {
 	  LoadSearchTerm.open();

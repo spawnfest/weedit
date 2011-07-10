@@ -1,6 +1,6 @@
-h1. WeEdit
+h1. TypeSocial
 
-Spawnfest WeEdit
+Spawnfest TypeSocial
 
 h2. Author(s)
 
@@ -8,6 +8,15 @@ h2. Author(s)
 * Manuel Gomez <manuel@inakanetworks.com>
 * Matt Maeda <matt@inakanetworks.com>
 * Chad DePue <chad@inakanetworks.com>
+
+h2. Installation
+
+You need:
+
+* rebar
+* riak
+* erlang r14 or later
+* nginx on port 80, proxying traffic to 12001
 
 h2. Copyright
 

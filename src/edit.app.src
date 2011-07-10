@@ -9,5 +9,9 @@
   {env, [{riak_server, "127.0.0.1"},
          {riak_port, 8087},
          {twitter_stream_user, "inaka_testing"},
-         {twitter_stream_password, "nohaymonedas"}]}
+         {twitter_stream_password, "nohaymonedas"},
+         {initial_title, <<"Welcome to TypeWith.me!">>},
+         {initial_body, <<"This document text is synchronized as you type, so that everyone viewing this page sees the same text. This allows you to collaborate seamlessly on documents in your Web browser.\n",
+                          "\n",
+                          "Go ahead - send the link to this page to a friend, colleague, or co-worker and watch the magic unfold!">>}]}
  ]}.

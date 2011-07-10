@@ -73,9 +73,16 @@ init([]) ->
 
 %% @private
 -spec handle_call(term(), reference(), state()) -> {reply, term(), state()} | {stop, normal, ok, state()}.
-handle_call(create_document, _From, State) ->
-  DocId = random_document_id(),
-  {reply, {ok, DocId}, State};
+handle_call(create_document, From, State) ->
+  DocId = edit_util:random_id(),
+  case riakc_pb_socket:get(State#state.riak,
+                           <<(State#state.riak_bucket_prefix)/binary, "documents">>,
+                           edit_util:safe_term_to_binary(DocId)) of
+    {ok, _} ->
+      handle_call(create_document, From, State);
+    _ ->
+      {reply, {ok, DocId}, State}
+  end;
 handle_call({document, DocId}, _From, State) ->
   case riakc_pb_socket:get(State#state.riak,
                            <<(State#state.riak_bucket_prefix)/binary, "documents">>,
@@ -151,7 +158,10 @@ handle_cast({ensure_document, DocId}, State) ->
     {ok, _} ->
       {noreply, State};
     _ ->
-      handle_cast({update, #edit_document{id = DocId}, creation, null}, State)
+      handle_cast({update, #edit_document{id = DocId,
+                                          title = edit_util:get_env(initial_title),
+                                          body = edit_util:get_env(initial_body)},
+                   creation, null}, State)
   end;
 handle_cast({update, Document, Type, Patch}, State) ->
   DRiakValue = iolist_to_binary(itweet_mochijson2:encode(edit_util:to_mochi(Document))),
@@ -211,17 +221,3 @@ terminate(Reason, _State) ->
       ?WARN("terminating: ~p~n", [Reason])
   end,
   ok.
-
-
-%% ------------------------------------------------------------------
-%% Internal Function Definitions
-%% ------------------------------------------------------------------
-random_document_id() -> 
-  DocId = edit_util:random_id(),
-  case reserved(DocId) of 
-    true  -> random_document_id();
-    false -> reserve(DocId), DocId
-  end.
-
-reserved(DocId) -> false.
-reserve(DocId) -> ok.
