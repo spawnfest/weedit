@@ -243,8 +243,10 @@ var AddHashTerm = {
 	add: function(term) {
 		if($("#searchterms > div").size() < 10) {
 			sanitizedterm	= "#" + term
-			$('<div><div class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
-			TSocket.doSetTwitter(sanitizedterm);
+			if ($(santizedterm).length == 0) {
+				$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
+				TSocket.doSetTwitter(sanitizedterm);
+			}
 		}
 		
 		if($("#searchterms > div").size() == 10) {
@@ -341,6 +343,7 @@ var LoadSearchTerm = {
 	        AddHashTerm.add($('#searchterminput').val().replace(/^#/,''));
 	        
 	        $('#mask, .window').hide();
+	        $('#searchterminput').val('');
 	    });
 	
 	     
@@ -348,6 +351,7 @@ var LoadSearchTerm = {
 	    $('#mask').click(function () {
 	        $(this).hide();
 	        $('.window').hide();
+	        $('#searchterminput').val('');
 	    });
 	}
 }
