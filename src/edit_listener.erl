@@ -116,4 +116,3 @@ handle_request('GET', [ "doc", "stylesheets" |  Path] , Req) ->
 
 handle_request('GET', Path, Req) ->
   Req:file(filename:join(["www"| Path])).
-

@@ -98,7 +98,7 @@ login(DocId, Token, User) ->
 -spec init(document_id()) -> {ok, state()}.
 init(DocId) ->
   ?INFO("Starting ~s~n", [DocId]),
-  {ok, Doc} = edit_db:document(DocId),
+  Document = edit_db:document(DocId),
   DispPid =
     case gen_event:start_link(event_dispatcher(DocId)) of
       {ok, DPid} ->
@@ -106,7 +106,7 @@ init(DocId) ->
         DPid;
       {error, {already_started, DPid}} -> DPid
     end,
-  try edit_document_handler:subscribe(Doc)
+  try edit_document_handler:subscribe(Document)
   catch
     throw:couldnt_subscribe ->
       ?ERROR("Document ~s couldn't subscribe to the twitter stream.  No tweets for it.~n", [DocId])
@@ -116,7 +116,7 @@ init(DocId) ->
   JS = init_js(),
 
   ?INFO("Event dispatcher for ~s running in ~p~n", [DocId, DispPid]),
-  {ok, #state{document = Doc,
+  {ok, #state{document = Document,
               js_context = JS}}.
 
 %% @private
@@ -132,7 +132,7 @@ handle_call(stop, _From, State) ->
 -spec handle_cast(term(), state()) -> {noreply, state()}.
 handle_cast({add_tweet, Tweet}, State) ->
   #edit_document{id = DocId} = State#state.document,
-  ok = edit_db:update(DocId, undefined, tweet, Tweet),
+  ok = edit_db:update(State#state.document, undefined, tweet, Tweet),
   gen_event:notify(event_dispatcher(DocId, local),
     {outbound_message, <<"tweet">>, [{<<"tweet">>,edit_util:mochi_to_jsx(Tweet)}], undefined}),
   {noreply, State};
