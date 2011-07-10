@@ -8,17 +8,17 @@ var DiffMatchPatch = {
     console.log("Patch");
     console.log("Text1 = " + text1);
 
-    patches = this.object.patch_make(text1,diff_object)
+    patches = this.object.patch_make($.base64.encode(text1),diff_object)
 
     console.log("Patches = " + patches);
 
-    results = this.object.patch_apply(patches, text1);
+    results = this.object.patch_apply(patches, $.base64.encode(text1));
 
     console.log("Results = " + results);
-    return results[0];
+    return $.base64.decode(results[0]);
   },
   getDiff: function(text1,text2) {
-    diff = this.object.diff_main(text1, text2, true); 
+    diff = this.object.diff_main($.base64.encode(text1), $.base64.encode(text2), true); 
     if (diff.length > 2) {
       this.object.diff_cleanupSemantic(diff);
     }
@@ -39,11 +39,6 @@ var TSocket = {
 
     this.object.on('connect', function(){
       console.log("We connected!!");
-
-
-      $('#addterm').spinner({ position: 'center', hide: true });
-
-      
       
       TSocket.doHello();
     });
@@ -133,7 +128,7 @@ var TypeSocial = {
     //console.log("Checking title...");
 
     if (this.title_last_rev != this.title.val()) {
-        console.log("title changed...");
+       console.log("title changed...");
        diff = this.dmp.getDiff(this.title_last_rev,this.title.val());
        this.title_last_rev = this.title.val();
        this.socket.doSetTitle(diff);
@@ -142,16 +137,17 @@ var TypeSocial = {
     //console.log("Checking doc...");
     var content = "";
     if (this.editor.tinymce()) { 
-      content = this.editor.timymce().getContent();
+      content = this.editor.tinymce().getContent();
     } else { content = this.editor.val(); }
 
     if (this.editor_last_rev != content) {
       console.log("doc changed...");
       console.log(this.editor_last_rev);
       console.log(content);
-       diff = this.dmp.getDiff(this.editor_last_rev,content);
-       this.editor_last_rev = content;
-       this.socket.doSetDoc(diff);
+
+      diff = this.dmp.getDiff(this.editor_last_rev,content);
+      this.editor_last_rev = content;
+      this.socket.doSetDoc(diff);
     }
 
   },
@@ -167,8 +163,6 @@ var TypeSocial = {
       this.editor.val(this.dmp.applyPatch(this.editor.val(),diff));       
       this.editor_last_rev = this.editor.val();
     }
-
-
   },
   startInterval: function(interval){
     var instance = this;
@@ -179,7 +173,7 @@ var TypeSocial = {
   },
   init: function(ext_config) {
 
-    $('#addterm').spinner({position:'center',hide:true});
+    $('#addterm').spinner({ position: 'center', hide: true });
 
     // Create the editor and set the config vars
     if (ext_config) {this.config = config}
