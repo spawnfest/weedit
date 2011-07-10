@@ -217,30 +217,30 @@ var AddHashTerm = {
 	init: function() {
 		var terms=[];
 		jQuery.each(terms, function() {
-			if($("#searchterms > div").size() < 10 && $(this).length == 0) {
+			if($("#searchterms").size() < 10 && $(this).length == 0) {
 				$('<div><div id="'+ this + '" class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);				
 			}
 			
-			if($("#searchterms > div").size() == 10) {
+			if($("#searchterms").size() == 10) {
 				$('#addterm').remove();
 			}
 		});
 	},
 	add: function(term) {
-		if($("#searchterms > div").size() < 10) {
+		if($("#searchterms").size() < 10) {
 			sanitizedterm	= "#" + term;
 			if ($(sanitizedterm).length == 0) {
-				$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
+				$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').appendTo('#searchterms').fadeIn(1000);
 				
 			}
 		}
 		
-		if($("#searchterms > div").size() == 10) {
+		if($("#searchterms").size() == 10) {
 			$('#addterm').remove();
 		}
 		
 		var terms = new Array();
-		$('#searchterm > div').each(function(index, domEle) {
+		$("#searchterms > div").each(function(index, domEle) {
 			console.log($(this).attr('id'));
 			terms.push($(this).attr('id'));
 		});
