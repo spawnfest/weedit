@@ -62,7 +62,7 @@ var TSocket = {
   },
   doLogin: function(screen_name, image_url) { 
     console.log("id and username = " + [screen_name,image_url]); 
-    this.object.send({'action':'login',"twitter_screen_name":screen_name, "twitter_image_url":image_url});
+    this.object.send({'action':'login',"doc_id":this.doc_id,"twitter_screen_name":screen_name, "twitter_image_url":image_url});
   },
   doSetTitle: function(diff) { 
     console.log(diff); 
@@ -110,17 +110,22 @@ var TypeSocial = {
     });
   },
   checkDiffChanges: function () {
-    console.log("Checking title...");
+	  
+    //console.log("Checking title...");
 
     if (this.title_last_rev != this.title.val()) {
+        console.log("title changed...");
        diff = this.dmp.getDiff(this.title_last_rev,this.title.val());
        this.title_last_rev = this.title.val();
        this.socket.doSetTitle(diff);
     }
 
-    console.log("Checking doc...");
+    //console.log("Checking doc...");
 
     if (this.editor_last_rev != this.editor.val()) {
+      console.log("doc changed...");
+      console.log(this.editor_last_rev);
+      console.log(this.editor.val());
        diff = this.dmp.getDiff(this.editor_last_rev,this.editor.val());
        this.editor_last_rev = this.editor.val();
        this.socket.doSetDoc(diff);
@@ -208,7 +213,7 @@ var RefreshTweetList = {
 
 var GetHashTerms = {
 	init: function() {
-		var terms=["#testing","#tweet","#typesocial","#allyourspawnarebelongtous"];
+		var terms=[];
 		
 		jQuery.each(terms, function() {
 			if($("#searchterms > div").size() < 10) {
@@ -224,7 +229,7 @@ var GetHashTerms = {
 
 var AddHashTerm = {
 	init: function() {
-		var terms=["#new term","#new tweet","#more stuff","#illegal","#stopnow"];
+		var terms=[];
 		jQuery.each(terms, function() {
 			if($("#searchterms > div").size() < 10) {
 				$('<div><div class="searchterm"></div>' + this + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);
@@ -365,27 +370,31 @@ var LoadTweetBox = {
 $(document).ready(function(){
 
   TypeSocial.init();
-  
   RefreshClientList.load();
   GetHashTerms.init();
   RefreshTweetList.load();  
   LoadTweetBox.init();
   AddHashTerm.init();
+
+  $('#addterm').click(function() {
+	  LoadSearchTerm.open();
+  });
   
   twttr.anywhere(function(twitter) {  
-	    if(!twitter.isConnected()){  
-	        twitteruser		= twitter.currentUser.data('screen_name');
-	        twitterimgurl	= twitter.currentUser.data('profile_image_url');
-	        TSocket.doLogin(twitteruser,twitterimgurl);
+	    if(twitter.isConnected()){  
+        try {
+        	console.log(twitter);
+	        var twitteruser		= twitter.currentUser.data('screen_name');
+	        var twitterimgurl	= twitter.currentUser.data('profile_image_url');
+	        console.log("User " + twitteruser + " is logged in");
+  	        TSocket.doLogin(twitteruser,twitterimgurl);
+        } catch(error) {
+            console.log(error);
+        }
 	    } else {  
 	    	LoginBox.init();
 	    }  
 	});
-  
-  
-  
-  
-  $('#addterm').click(function() {
-	  LoadSearchTerm.open();
-  });
+
+
 });
