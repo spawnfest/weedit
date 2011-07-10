@@ -91,6 +91,7 @@ init_schema() ->
   ets:new(?VERSIONS_TABLE,[protected,set,named_table]).
 
 random_document_url() -> 
+  _ = random:seed(erlang:now()),
   Name = edit_util:random_url(),
   case ets:member(?URL_TABLE,{Name}) of 
     true  -> random_document_url();
