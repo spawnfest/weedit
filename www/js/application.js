@@ -54,6 +54,10 @@ var TSocket = {
         case 'set_hash_tags':
           AddHashTerm.loadlist(data.tags);
           break;
+        case 'tweet':
+          console.log("receive a tweet list");
+          AddTweet.load(data.tweet);
+          break;
         default:
           console.log("I don't know this action" + data);
       }
@@ -191,12 +195,9 @@ var RefreshClientList = {
 	}
 }
 
-var RefreshTweetList = {
-	//TODO: Parse JSON
-	load: function() {
-		var tweets=["more test text","This is some text","this is some more test text","this text is awesome","more and more text", "this is the absolute maximum size of a tweet.  this should not overflow and the tweet div maximum should be set to this height, not more ok!"];
-	
-		jQuery.each(tweets, function() {
+var AddTweet = {	
+	load: function(tweets) {
+		$.each(tweets, function() {		
 			var text	= '';
 			if (this.length >= 100) {
 				//TODO: Fix url
