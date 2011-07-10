@@ -305,7 +305,7 @@ var AddHashTerm = {
     $.each(jsonlist, function(i,val){
   	  sanitizedterm		= "#" + val;
 
-			$('<div><div id="'+ sanitizedterm + '" class="searchterm"></div>' + sanitizedterm + '</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
+			$('<div id="'+ sanitizedterm + '" class="searchterm">' + sanitizedterm + '<div id="'+sanitizedterm+' class="remove" onclick="AddHashTerm.delete('+sanitizedterm+');"style="cursor: pointer;"><img id="delete" src="images/delete_icon.png"></div>"</div>').hide().appendTo('#searchterms').delay(500).fadeIn(1000);		
 
       if (new_search == '') {
         new_search  = "New search term added.  Now searching on " + sanitizedterm;
@@ -316,7 +316,17 @@ var AddHashTerm = {
 	
 	  search_arr.push(new_search);
 
-    AddTweet.load(search_arr,'terms');
+	  AddTweet.load(search_arr,'terms');
+	},
+	deleteitem: function(div_text) {
+		var terms = new Array();
+		$("#searchterms > div").each(function(index, domEle) {		
+			if ($(this).text() != div_text) {
+				terms.push($(this).text().replace(/^#/,''));
+			}
+		});
+		
+		TSocket.doSetHashTags(terms);		
 	}
 }
 
