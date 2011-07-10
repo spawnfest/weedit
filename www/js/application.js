@@ -416,7 +416,11 @@ var LoadSearchTerm = {
 
 var LoadTweetBox = {
 	init: function() {
-		twttr.anywhere("1",function (T) {
+		//twttr.anywhere("1",function (T) {
+    twttr.anywhere(onAnywhereLoad);
+
+    function onAnywhereLoad(T) {
+
 		
 			T("#tbox").tweetBox({
 				label: "Thoughts?",
@@ -424,7 +428,7 @@ var LoadTweetBox = {
 		  		width: 190,
 		  		defaultContent: "<Type Socially!>"
 			});
-		});
+		};
 	}
 }
 
