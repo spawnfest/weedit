@@ -18,6 +18,9 @@
 -export([create_document/0, ensure_document/1, document/1]).
 -export([update/4]).
 
+-record(state, {}).
+-opaque state() :: #state{}.
+
 %%-------------------------------------------------------------------
 %% PUBLIC API
 %%-------------------------------------------------------------------
@@ -48,29 +51,46 @@ update(Document, User, Type, Patch) ->
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
-init(Args) ->
+%% @private
+-spec init(document_id()) -> {ok, state()}.
+init([]) ->
   _ = random:seed(erlang:now()),
-  {ok, Args}.
+  {ok, #state{}}.
 
+%% @private
+-spec handle_call(term(), reference(), state()) -> {reply, term(), state()} | {stop, normal, ok, state()}.
 handle_call(create_document, _From, State) ->
   DocId = random_document_id(),
   {reply, {ok, DocId}, State};
 handle_call({document, DocId}, _From, State) ->
   {reply, {ok, #edit_document{id = DocId}}, State}.
 
+%% @private
+-spec handle_cast(term(), state()) -> {noreply, state()}.
 handle_cast({ensure_document, DocId}, State) ->
   {noreply, State};
 handle_cast({update, Document, User, Type, Patch}, State) ->
   {noreply, State}.
 
-handle_info(_Info, State) ->
-  {noreply, State}.
+%% @private
+-spec handle_info(term(), state()) -> {noreply, state()} | {stop, term(), state()}.
+handle_info(_Info, State) -> {noreply, State}.
 
-terminate(_Reason, _State) ->
+%% @private
+-spec code_change(any(), state(), any()) -> {ok, state()}.
+code_change(_OldVsn, State, _Extra) -> {ok, State}.
+
+%% @private
+-spec terminate(any(), state()) -> any().
+terminate(Reason, _State) ->
+  case Reason of
+    normal ->
+      ?INFO("terminating~n", []);
+    Reason ->
+      ?WARN("terminating: ~p~n", [Reason])
+  end,
   ok.
 
-code_change(_OldVsn, State, _Extra) ->
-  {ok, State}.
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions

@@ -215,6 +215,9 @@ terminate(Reason, State) ->
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
+%% ------------------------------------------------------------------
+%% Private functions
+%% ------------------------------------------------------------------
 init_js() ->
   {ok, JS} = js_driver:new(),
   js:define(JS, <<"window={};">>),
