@@ -175,7 +175,7 @@ handle_cast({edit_body, Diff, Token}, State) ->
 %% save login of a user
 handle_cast({login, User, Token}, State) ->
   #edit_document{id = DocId, users = Users} = State#state.document,
-  NewUsers = lists:keystore(User#edit_user.id, #edit_user.id, Users, User),
+  NewUsers = lists:keystore(User#edit_user.username, #edit_user.username, Users, User),
   NewDocument = State#state.document#edit_document{users = NewUsers},
   ?INFO("New users are : ~p ~n",[NewUsers]),
   ok = edit_db:update(NewDocument, Token, login, User),

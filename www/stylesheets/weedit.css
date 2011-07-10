@@ -132,6 +132,15 @@ hr {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	font-size: 32pt;
+	vertical-align: top;
+	width: 940px;
+}
+
+#home_document_title {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	font-size: 32pt;
   font-weight: bold;
 	vertical-align: top;
 	width: 700px;
