@@ -209,7 +209,7 @@ var RefreshClientList = {
             $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
           },
           error:function(jqXHR, textStatus, errorThrown) {
-            imageurl  = "images/spawnfest_typewriter.jpeg";
+            imageurl  = "images/logo.png";
             $('#userlist').append('<div class="twitteritem" id="' + username + '"><img id="twitter_avatar" src="' + imageurl + '"><span id="handle">' + username + '</span></div>')
           }
         });
@@ -236,7 +236,7 @@ var AddTweet = {
 		  }
     } else {
       text  = tweet;
-      img   = "images/spawnfest_typewriter.jpeg";
+      img   = "images/logo.png";
     }
 						
 		if($("#tweets > div").size() == 5) {

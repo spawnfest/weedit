@@ -208,9 +208,16 @@ hr {
 }
 
 #addterm {
-	font-weight:bolder;
+  font-size:10pt;
 	text-decoration:none;
 	color:#25587E;	
+}
+
+#typesocial
+{
+  position:absolute;
+  font-size:18pt;
+  color:white;
 }
 
 #searchterms {
