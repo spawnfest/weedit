@@ -105,9 +105,9 @@ login(DocId, Token, User) ->
   gen_server:cast(process_name(DocId), {login, User, Token}).
 
 %% ------------------------------------------------------------------
-%% gen_server Function Definitions
+%% Behaviour Callbacks
 %% ------------------------------------------------------------------
-%% @hidden
+%% @private
 -spec init(document_id()) -> {ok, state()}.
 init(DocId) ->
   ?INFO("Starting ~s~n", [DocId]),
@@ -132,7 +132,7 @@ init(DocId) ->
   {ok, #state{document = Doc,
               js_context = JS}}.
 
-%% @hidden
+%% @private
 -spec handle_call(term(), reference(), state()) -> {reply, term(), state()} | {stop, normal, ok, state()}.
 handle_call(document, _From, State) ->
   {reply, State#state.document, State};
@@ -141,7 +141,7 @@ handle_call(body, _From, State) ->
 handle_call(stop, _From, State) ->
   {stop, normal, ok, State}.
 
-%% @hidden
+%% @private
 -spec handle_cast(term(), state()) -> {noreply, state()}.
 handle_cast({add_tweet, Tweet}, State) ->
   #edit_document{id = DocId} = State#state.document,
@@ -204,12 +204,12 @@ handle_cast({login, User, Token}, State) ->
                                             lists:map(fun edit_util:to_jsx/1, NewUsers)}], Token}),
   {noreply, State#state{document = NewDocument}}.
 
-%% @hidden
+%% @private
 -spec handle_info(term(), state()) -> {noreply, state()} | {stop, term(), state()}.
 handle_info(_Info, State) ->
   {noreply, State}.
 
-%% @hidden
+%% @private
 -spec terminate(any(), state()) -> any().
 terminate(Reason, State) ->
   #edit_document{id = DocId} = State#state.document,
@@ -223,7 +223,7 @@ terminate(Reason, State) ->
   ok = gen_event:sync_notify(event_dispatcher(DocId, local), {document_EXIT, DocId, Reason}),
   ok = gen_event:stop(event_dispatcher(DocId, local)).
 
-%% @hidden
+%% @private
 -spec code_change(any(), any(), any()) -> {ok, any()}.
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
