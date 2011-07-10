@@ -58,11 +58,14 @@ var TSocket = {
           console.log("receive a tweet list");
           AddTweet.load(data.tweet);
           break;
+        case 'set_users':
+          console.log("receive user list");
+          RefreshClientList.load(data.users);
+          break;
         default:
           console.log("I don't know this action" + data);
       }
     });
-
   },
   doHello: function(){
     this.object.send({"doc_id":this.doc_id,"action":"hello"});
@@ -183,10 +186,7 @@ var TypeSocial = {
 }
 
 var RefreshClientList = {
-	//TODO: Parse JSON
-	load: function() {
-		var users=["Chad","Fernando","Manuel","Matt", "Matt","Chad"];
-	
+	load: function(users) {		
 		jQuery.each(users, function() {
 			if ($("#" + this).length == 0){			
 				$('#userlist').append('<div class="twitteritem" id="' + this + '"><img id="twitter_avatar" src="images/twitter_logo.png"><span id="handle">' + this + '</span></div>')
@@ -386,7 +386,6 @@ var LoadTweetBox = {
 $(document).ready(function(){
 
   TypeSocial.init();
-  RefreshClientList.load();
   RefreshTweetList.load();  
   LoadTweetBox.init();
   AddHashTerm.init();
