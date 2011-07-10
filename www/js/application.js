@@ -225,7 +225,7 @@ var RefreshClientList = {
 		$.each(users, function() {
 			var user  = this.username;
 
-			if ($("#"+username).length == 0) {
+			if ($("#"+user).length == 0) {
 				if (userlist == '') {
 					userlist	= user;
 				} else {
